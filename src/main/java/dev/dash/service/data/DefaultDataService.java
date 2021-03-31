@@ -314,7 +314,7 @@ public class DefaultDataService {
     public void setupQueryScreens( SchemaConfig configuratorScheme, DashboardConfig dashboardScreens) {
         // setup queries
         QueryConfig dashboardListQuery = new QueryConfig("DD_DevDash_Query_List", "Query List",
-            "Select * from queryconfig", configuratorScheme);
+            "Select * from queryconfig LIMIT ${DD_Configurator_Query_List_Table1_offset}, ${DD_Configurator_Query_List_Table1_limit} ", configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 				
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Query_Create", "Query Create",
@@ -335,7 +335,10 @@ public class DefaultDataService {
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Query_List", "Query List", 
-        "[{\"code\":\"DD_Configurator_Query_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Query_List\"},{\"code\":\"DD_Configurator_Query_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Query_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "["+
+            "{\"code\":\"DD_Configurator_Query_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Query_List\"}," + 
+            "{\"code\":\"DD_Configurator_Query_List_Page1\",\"type\":\"PAGINATOR\", \"exeQuery\":[\"DD_DevDash_Query_List\"], \"offsetRC\":\"DD_Configurator_Query_List_Table1_offset\", \"limitRC\":\"DD_Configurator_Query_List_Table1_limit\"}," + 
+            "{\"code\":\"DD_Configurator_Query_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Query_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Query_Create", "Query Create", 

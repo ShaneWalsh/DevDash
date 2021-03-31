@@ -27,11 +27,6 @@ public class BuilderController {
     @Autowired
     ConnectionConfigRepository connectionConfigRepository;
 
-    @GetMapping("")
-	public String index() {
-		return "hello world";
-    }
-
 	@GetMapping("/list")
 	public List<SchemaConfig> list() {
         List<SchemaConfig> schemaConfigs = schemaConfigRepository.findAll();
