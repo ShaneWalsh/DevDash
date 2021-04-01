@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import dev.dash.enums.DdlTypeEnum;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@Table(name = "queryconfig")
 public class QueryConfig {
 	@Id
 	@Column(name="queryConfig_id")

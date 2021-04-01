@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@Table(name = "connectionconfig")
 public class ConnectionConfig {
  
 	@Id

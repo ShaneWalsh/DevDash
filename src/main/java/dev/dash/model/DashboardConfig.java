@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.persistence.JoinColumn;
 
 import lombok.Getter;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "dashboardconfig")
 public class DashboardConfig {
  
 	@Id
