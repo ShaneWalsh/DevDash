@@ -91,6 +91,7 @@ public class QueryExecutorService {
     private ResultSet executeQuery(String query, Connection connection, ExecutionData executionData) throws SQLException {
         Statement stmt = null;
         stmt = connection.createStatement();
+        if(log.isDebugEnabled()){log.debug(query);}
         ResultSet rs = stmt.executeQuery(query);
         return rs;
     }
@@ -98,6 +99,7 @@ public class QueryExecutorService {
     private int executeUpdate(String query, Connection connection, ExecutionData executionData) throws SQLException {
         Statement stmt = null;
         stmt = connection.createStatement();
+        if(log.isDebugEnabled()){log.debug(query);}
         return stmt.executeUpdate(query);
     }
 

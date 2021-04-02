@@ -172,7 +172,7 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Panel_Update", "Panel Update",
-            "update panelconfig set code='${DD_Configurator_Panel_Update_F_Code}', name='${DD_Configurator_Panel_Update_F_Name}', elements='${DD_Configurator_Panel_Create_F_elements}', tabconfig_id=${DD_Configurator_Panel_Create_F_tabconfig_id} where panelconfig_id = ${DD_Configurator_Panel_Update_F_panelconfig_id} ", DdlTypeEnum.Update.name(), configuratorScheme);
+            "update panelconfig set code='${DD_Configurator_Panel_Update_F_Code}', name='${DD_Configurator_Panel_Update_F_Name}', elements='${DD_Configurator_Panel_Update_F_elements}', tabconfig_id=${DD_Configurator_Panel_Update_F_tabconfig_id} where panelconfig_id = ${DD_Configurator_Panel_Update_F_panelconfig_id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
         TabConfig tabConfig  = new TabConfig("DD_Configurator_Panel","Panels",1,dashboardScreens);
