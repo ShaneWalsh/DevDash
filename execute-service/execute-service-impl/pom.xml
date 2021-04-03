@@ -5,16 +5,23 @@
 	
 	<parent>
 		<groupId>dev.dash</groupId>
-		<artifactId>dev-dash-parent</artifactId>
+		<artifactId>dev-dash-execute-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
 	<groupId>dev.dash</groupId>
-	<artifactId>dev-dash-web</artifactId>
+	<artifactId>dev-dash-execute-impl</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Dev Dash Web</name>
+	<name>Dev Dash Execute Impl</name>
 
 	<dependencies>
+	
+		<dependency>
+			<groupId>dev.dash</groupId>
+			<artifactId>dev-dash-execute-api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	
 		<dependency>
 			<groupId>dev.dash</groupId>
 			<artifactId>dev-dash-common</artifactId>
@@ -24,48 +31,18 @@
 			<groupId>dev.dash</groupId>
 			<artifactId>dev-dash-data</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency>		
 
-		<dependency>
-			<groupId>dev.dash</groupId>
-			<artifactId>dev-dash-execute-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>dev.dash</groupId>
-			<artifactId>dev-dash-execute-impl</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency> -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-
-		<!-- // https://stackoverflow.com/questions/19537396/missing-artifact-com-microsoft-sqlserversqljdbc4jar4-0 -->
-		<!-- <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>4.0</version>
-        </dependency> -->
+		
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
 			<version>6.1.0.jre8</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
@@ -81,25 +58,12 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20190722</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 @Slf4j
 @Service
-public class QueryExecutorService {
+public class QueryExecutorServiceImpl implements QueryExecutorService {
     
     @Autowired
     private QueryConfigRepository queryConfigRepository;
@@ -107,22 +107,6 @@ public class QueryExecutorService {
         Connection connection = null;
         connection = DriverManager.getConnection(connectionConfig.getUrl(),connectionConfig.getUsername(),connectionConfig.getPassword());
         return connection;
-    }
-
-    // https://stackoverflow.com/questions/6514876/most-efficient-conversion-of-resultset-to-json
-    public static JSONArray jsonify(ResultSet rs) throws SQLException {
-        JSONArray json = new JSONArray();
-        ResultSetMetaData rsmd = rs.getMetaData();
-        while(rs.next()) {
-            int numColumns = rsmd.getColumnCount();
-            JSONObject obj = new JSONObject();
-            for (int i=1; i<=numColumns; i++) {
-                String column_name = rsmd.getColumnName(i);
-                obj.put(column_name, rs.getObject(column_name));
-            }
-            json.put(obj);
-        }
-        return json;
     }
 
 }

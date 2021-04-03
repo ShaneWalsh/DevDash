@@ -27,7 +27,7 @@ public class QueryStringParser {
      */
     public static String parseAndReplaceQueryString(QueryConfig queryConfig, ExecutionData executionData ){
         String queryString = queryConfig.getQueryString();
-        List<ElementData> allData = new ArrayList(); // todo, is this even required anymore?
+        List<ElementData> allData = new ArrayList<>(); // todo, is this even required anymore?
         Map<String,ElementData> replacementCodeMap = new HashMap<>();
         if(executionData != null && executionData.getPanelElementData() != null) {
             Map<String, List<ElementData>> panelElementData = executionData.getPanelElementData();

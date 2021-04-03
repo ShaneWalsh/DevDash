@@ -8,13 +8,7 @@ import org.springframework.stereotype.Service;
 import dev.dash.dao.DashboardConfigRepository;
 import dev.dash.model.DashboardConfig;
 
-@Service
-public class DashboardConfigService {
+public interface DashboardConfigService {
  
-    @Autowired
-    private DashboardConfigRepository dashboardConfigRepository;
- 
-    public List<DashboardConfig> list() {
-        return dashboardConfigRepository.findAll();
-    }
+    public List<DashboardConfig> list();
 }
