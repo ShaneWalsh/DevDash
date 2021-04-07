@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.dash.model.body.QueryExecution;
 import dev.dash.service.QueryExecutorService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("query")
 public class ElementQueryController {
@@ -24,10 +26,10 @@ public class ElementQueryController {
 
     @PostMapping("/execute")
     public ResponseEntity<List<Object>> execute(@RequestBody final QueryExecution queryExecution) throws SQLException {
-        System.out.println(queryExecution.toString()); // todo debug
+        if(log.isDebugEnabled()) log.debug(queryExecution.toString()); // todo debug
         final JSONArray arr = queryExecutorService.processQuery(queryExecution);
         final List<Object> list = arr.toList();
-        System.out.println(arr.toList()); // todo debug
+        if(log.isDebugEnabled()) list.stream().forEach(obj -> log.debug(obj.toString()));
         return new ResponseEntity<List<Object>>(list,HttpStatus.OK);
     }
 }

@@ -1,25 +1,12 @@
 package dev.dash.service;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import dev.dash.dao.ConnectionConfigRepository;
-import dev.dash.dao.QueryConfigRepository;
-import dev.dash.enums.DdlTypeEnum;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.body.QueryExecution;
-import dev.dash.model.body.SchemaConnection;
-import dev.dash.service.util.QueryStringParser;
-import lombok.extern.slf4j.Slf4j;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -78,7 +78,9 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
             } else {
                 int res = executeUpdate(query, connection, executionData);
                 log.info("executeUpdate "+queryConfig.getCode()+" : affected rows:" + res);
-                return new JSONArray();
+                JSONArray jsonArray = new JSONArray();
+                jsonArray.put(new String[]{"Affected Rows : "+res});
+                return jsonArray;
             }
         } catch (SQLException e) {
             e.printStackTrace();
