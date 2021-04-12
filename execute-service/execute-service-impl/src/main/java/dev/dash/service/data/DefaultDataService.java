@@ -127,7 +127,7 @@ public class DefaultDataService {
             "update tabconfig set code='${DD_Configurator_Tab_Update_F_Code}', name='${DD_Configurator_Tab_Update_F_Name}', displayOrder=${DD_Configurator_Tab_Update_F_DisplayOrder}, dashboardconfig_id=${DD_Configurator_Tab_Update_F_Dash_Id} where tabconfig_id = ${DD_Configurator_Tab_Update_F_Tab_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Tab","Tabs",1,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Tab","Tabs",2,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
@@ -175,7 +175,7 @@ public class DefaultDataService {
             "update panelconfig set code='${DD_Configurator_Panel_Update_F_Code}', name='${DD_Configurator_Panel_Update_F_Name}', elements='${DD_Configurator_Panel_Update_F_elements}', tabconfig_id=${DD_Configurator_Panel_Update_F_tabconfig_id} where panelconfig_id = ${DD_Configurator_Panel_Update_F_panelconfig_id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Panel","Panels",1,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Panel","Panels",3,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
@@ -224,7 +224,7 @@ public class DefaultDataService {
             "update schemaconfig set code='${DD_Configurator_Schema_Update_F_Code}', name='${DD_Configurator_Schema_Update_F_Name}' where schemaconfig_id = ${DD_Configurator_Schema_Update_F_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Schemas","Schemas",1,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Schemas","Schemas",4,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
@@ -271,7 +271,7 @@ public class DefaultDataService {
 
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Connections","Connections",1,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Connections","Connections",5,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
@@ -330,7 +330,7 @@ public class DefaultDataService {
 
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Queries","Queries",1,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Queries","Queries",5,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
