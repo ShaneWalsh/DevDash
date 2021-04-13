@@ -1,6 +1,10 @@
 package dev.dash.service.util.parsedQueryModel;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 import dev.dash.model.elements.ElementData;
 import dev.dash.service.util.queryParts.LogicBlock;
@@ -19,8 +23,10 @@ public interface QueryModelBlock {
 
     /**
      * Classic replacement of the RC
+     * Does a simple replacement for sql queries for single quotes.
      */
     default String replaceReplacementCode(String str, String replacementCode, String value) {
-        return str.replaceAll("\\$\\{"+replacementCode+"\\}", value);
+        String valueSafeSQL = value.replaceAll("'", "''");
+        return str.replaceAll(Pattern.quote("${"+replacementCode+"}"), Matcher.quoteReplacement(valueSafeSQL));
     }
 }

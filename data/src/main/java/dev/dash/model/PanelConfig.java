@@ -34,17 +34,11 @@ public class PanelConfig{
 	@Column(name="name")
     private String name;
     
-    @Column(name="positionX")
-    private Integer positionX;
+    @Column(name="gridRow")
+    private Integer gridRow;
     
-    @Column(name="positionY")
-    private Integer positionY;
-    
-    @Column(name="columnSizeX")
-    private Integer columnSizeX;
-    
-    @Column(name="columnSizeY")
-    private Integer columnSizeY;    
+    @Column(name="gridCol")
+    private Integer gridCol;  
     
     @Column(name="showRefresh")
 	private boolean showRefresh;
@@ -63,6 +57,15 @@ public class PanelConfig{
     public PanelConfig(String code, String name, String elements, TabConfig tabConfig) {
         this.code = code;
         this.name = name;
+        this.elements = elements;
+        this.tabConfig = tabConfig;
+    }
+
+    public PanelConfig(String code, String name, Integer col, Integer row, String elements, TabConfig tabConfig) {
+        this.code = code;
+        this.name = name;
+        this.gridCol = col;
+        this.gridRow = row;
         this.elements = elements;
         this.tabConfig = tabConfig;
     }

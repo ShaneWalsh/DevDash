@@ -122,6 +122,8 @@ public class DashboardConfigController {
                     jgen.writeStartObject();
                     jgen.writeStringField("code", panelConfig.getCode());
                     jgen.writeStringField("name", panelConfig.getName());
+                    jgen.writeNumberField("gridCol", (panelConfig.getGridCol() != null) ? panelConfig.getGridCol() : 0);
+                    jgen.writeNumberField("gridRow", (panelConfig.getGridRow() != null) ? panelConfig.getGridRow() : 0);
                     jgen.writeStringField("elements", panelConfig.getElements());
                     jgen.writeEndObject();
                 }

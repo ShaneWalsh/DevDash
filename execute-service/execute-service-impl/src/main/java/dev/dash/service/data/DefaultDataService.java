@@ -168,11 +168,11 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 				
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Panel_Create", "Panel Create",
-            "insert into panelconfig (code,name,elements,tabconfig_id) values('${DD_Configurator_Panel_Create_F_Code}','${DD_Configurator_Panel_Create_F_Name}','${DD_Configurator_Panel_Create_F_elements}','${DD_Configurator_Panel_Create_F_tabconfig_id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+            "insert into panelconfig (code, name, gridCol, gridRow, elements,tabconfig_id) values('${DD_Configurator_Panel_Create_F_Code}','${DD_Configurator_Panel_Create_F_Name}', ${DD_Configurator_Panel_Create_F_grid_col}, ${DD_Configurator_Panel_Create_F_grid_row}, '${DD_Configurator_Panel_Create_F_elements}','${DD_Configurator_Panel_Create_F_tabconfig_id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Panel_Update", "Panel Update",
-            "update panelconfig set code='${DD_Configurator_Panel_Update_F_Code}', name='${DD_Configurator_Panel_Update_F_Name}', elements='${DD_Configurator_Panel_Update_F_elements}', tabconfig_id=${DD_Configurator_Panel_Update_F_tabconfig_id} where panelconfig_id = ${DD_Configurator_Panel_Update_F_panelconfig_id} ", DdlTypeEnum.Update.name(), configuratorScheme);
+            "update panelconfig set code='${DD_Configurator_Panel_Update_F_Code}', name='${DD_Configurator_Panel_Update_F_Name}', gridCol=${DD_Configurator_Panel_Update_F_grid_col}, gridRow=${DD_Configurator_Panel_Update_F_grid_row}, elements='${DD_Configurator_Panel_Update_F_elements}', tabconfig_id=${DD_Configurator_Panel_Update_F_tabconfig_id} where panelconfig_id = ${DD_Configurator_Panel_Update_F_panelconfig_id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
         TabConfig tabConfig  = new TabConfig("DD_Configurator_Panel","Panels",3,dashboardScreens);
@@ -187,6 +187,8 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Panel_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
+            "{\"code\":\"DD_Configurator_Panel_Create_F_grid_col\",\"type\":\"TEXT\",\"label\":\"Col\"}, "+
+            "{\"code\":\"DD_Configurator_Panel_Create_F_grid_row\",\"type\":\"TEXT\",\"label\":\"Row\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_elements\",\"type\":\"TEXT\",\"label\":\"Elements\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_tabconfig_id\",\"type\":\"TEXT\",\"label\":\"Tab to Link\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Panel_Create\",\"DD_DevDash_Panel_List\"],\"triggerOnLoad\":false} "+
@@ -197,6 +199,8 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Panel_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Panel_Update_F_grid_col\",\"type\":\"TEXT\",\"label\":\"Col\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"gridCol\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Panel_Update_F_grid_row\",\"type\":\"TEXT\",\"label\":\"Row\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"gridRow\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_elements\",\"type\":\"TEXT\",\"label\":\"Elements\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"elements\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_panelconfig_id\",\"type\":\"TEXT\",\"label\":\"Panel Id\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"panelconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_tabconfig_id\",\"type\":\"TEXT\",\"label\":\"Tab Id\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"tabconfig_id\\\"}\" },"+
@@ -330,7 +334,7 @@ public class DefaultDataService {
 
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
-        TabConfig tabConfig  = new TabConfig("DD_Configurator_Queries","Queries",5,dashboardScreens);
+        TabConfig tabConfig  = new TabConfig("DD_Configurator_Queries","Queries",6,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
