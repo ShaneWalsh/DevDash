@@ -4,8 +4,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-
 import dev.dash.model.elements.ElementData;
 import dev.dash.service.util.queryParts.LogicBlock;
 
@@ -27,6 +25,7 @@ public interface QueryModelBlock {
      */
     default String replaceReplacementCode(String str, String replacementCode, String value) {
         String valueSafeSQL = value.replaceAll("'", "''");
+        valueSafeSQL = valueSafeSQL.replaceAll(Pattern.quote("\\"), Matcher.quoteReplacement("\\\\")); // TODO remove both of these escapses once we move the Insert/Update/Delete to prepared statements
         return str.replaceAll(Pattern.quote("${"+replacementCode+"}"), Matcher.quoteReplacement(valueSafeSQL));
     }
 }

@@ -73,4 +73,32 @@ public class QueryStringParserTest {
         stringQuery = extractParsedQueryModel.processElementData(mappy);
         assertEquals("SELECT * FROM tutorials_tbl where tutorial_id = 1991 and p=1991 some more code", stringQuery);
     }
+
+    /**
+     * Ive had some issues with ' and \ in the query strings for the Insert/Update/Delete queries because I dont have Prepared Statements implemented yet.
+     * To insert " and ' and \ in string queries, "=\" and '='' and \=\\ 
+     */
+    @Test
+    void extractParsedQueryModel_escapse_characters_in_querystr_Test() {
+        ParsedQueryModel extractParsedQueryModel = QueryStringParser.extractParsedQueryModel("insert into test (q1,q2) values('${stringWithSingleQuotes}','${stringWithBackSlash}')");
+
+        Map<String, ElementData> mappy = new HashMap<>();
+        mappy.put("stringWithSingleQuotes", new ElementData("stringWithSingleQuotes", "stringWithSingleQuotes", "String", "update test set code='${DD_Configurator_Dashboard_Update_F_Code}' where dashboardconfig_id = ${DD_Configurator_Dashboard_Update_F_Id}"));
+        mappy.put("stringWithBackSlash", new ElementData("stringWithBackSlash", "stringWithBackSlash", "String", 
+        "["+
+            "{\"code\":\"DD_Configurator_Panel_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
+            "{\"name\":\"DD_Configurator_Panel_Update_F_name\",\"type\":\"TEXT\",\"label\":\"name\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"}"+
+        "]"));
+
+        
+
+        String stringQuery = extractParsedQueryModel.processElementData(mappy);
+        assertEquals("insert into test (q1,q2) values("+
+            "'update test set code=''${DD_Configurator_Dashboard_Update_F_Code}'' where dashboardconfig_id = ${DD_Configurator_Dashboard_Update_F_Id}',"+
+            "'[{\"code\":\"DD_Configurator_Panel_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\\\"tableRowColumnId\\\\\":\\\\\"code\\\\\"}\"},"+
+              "{\"name\":\"DD_Configurator_Panel_Update_F_name\",\"type\":\"TEXT\",\"label\":\"name\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\\\"tableRowColumnId\\\\\":\\\\\"name\\\\\"}\"}]')",
+            stringQuery);
+
+        
+    }
 }
