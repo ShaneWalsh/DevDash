@@ -109,8 +109,6 @@ public class DevDashApplication implements CommandLineRunner {
     }
 
 	public void part2() throws ClassNotFoundException {
-
-		System.out.println("fup");
 		
 		System.out.println("-------- MySQL JDBC Connection Demo ------------");
         try

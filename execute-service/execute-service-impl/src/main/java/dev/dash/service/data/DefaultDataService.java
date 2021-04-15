@@ -89,20 +89,20 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Dashboard_List", "Dashboard List", 
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_List", "Dashboard List", 3,1,
         "[{\"code\":\"DD_Configurator_Dashboard_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_List\"},{\"code\":\"DD_Configurator_Dashboard_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Create", "Dashboard Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Create", "Dashboard Create", 1,2,
         "[{\"code\":\"DD_Configurator_Dashboard_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, {\"code\":\"DD_Configurator_Dashboard_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, {\"code\":\"DD_Configurator_Dashboard_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Dashboard_Create\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Update", "Dashboard Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Update", "Dashboard Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Dashboard_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
-            "{\"code\":\"DD_Configurator_Dashboard_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Dashboard_Update\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false} "+
+            "{\"code\":\"DD_Configurator_Dashboard_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"hidden\":true,\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Dashboard_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"confirmation\":true,\"exeQuery\":[\"DD_DevDash_Dashboard_Update\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
 
         panelConfigRepository.saveAndFlush(panelConfig);
@@ -131,11 +131,11 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Tab_List", "Tab List", 
+        panelConfig = new PanelConfig("DD_Configurator_Tab_List", "Tab List", 3,1,
         "[{\"code\":\"DD_Configurator_Tab_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Tab_List\"},{\"code\":\"DD_Configurator_Tab_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Tab_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Tab_Create", "Tab Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Tab_Create", "Tab Create", 1,2,
         "["+
             "{\"code\":\"DD_Configurator_Tab_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Tab_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
@@ -145,12 +145,12 @@ public class DefaultDataService {
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Tab_Update", "Tab Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Tab_Update", "Tab Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Tab_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Tab_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Tab_Update_F_DisplayOrder\",\"type\":\"TEXT\",\"label\":\"Display Order\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"displayOrder\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Tab_Update_F_Tab_Id\",\"type\":\"TEXT\",\"label\":\"Tab Id\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"tabconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Tab_Update_F_Tab_Id\",\"type\":\"TEXT\",\"label\":\"Tab Id\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"hidden\":true, \"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"tabconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Tab_Update_F_Dash_Id\",\"type\":\"TEXT\",\"label\":\"Dash Id\", \"dataOn\":\"DD_Configurator_Tab_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Tab_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Tab_Update\",\"DD_DevDash_Tab_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -179,11 +179,11 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Panel_List", "Panel List", 
+        panelConfig = new PanelConfig("DD_Configurator_Panel_List", "Panel List", 3,1,
         "[{\"code\":\"DD_Configurator_Panel_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Panel_List\"},{\"code\":\"DD_Configurator_Panel_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Panel_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Panel_Create", "Panel Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Panel_Create", "Panel Create", 1,2,
         "["+
             "{\"code\":\"DD_Configurator_Panel_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
@@ -195,14 +195,14 @@ public class DefaultDataService {
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Panel_Update", "Panel Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Panel_Update", "Panel Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Panel_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_grid_col\",\"type\":\"TEXT\",\"label\":\"Col\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"gridCol\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_grid_row\",\"type\":\"TEXT\",\"label\":\"Row\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"gridRow\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_elements\",\"type\":\"TEXT\",\"label\":\"Elements\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"elements\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Panel_Update_F_panelconfig_id\",\"type\":\"TEXT\",\"label\":\"Panel Id\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"panelconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Panel_Update_F_panelconfig_id\",\"type\":\"TEXT\",\"label\":\"Panel Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"panelconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Panel_Update_F_tabconfig_id\",\"type\":\"TEXT\",\"label\":\"Tab Id\", \"dataOn\":\"DD_Configurator_Panel_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"tabconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Panel_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Panel_Update\",\"DD_DevDash_Panel_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -232,19 +232,19 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Schema_List", "Schema List", 
+        panelConfig = new PanelConfig("DD_Configurator_Schema_List", "Schema List", 3,1,
         "[{\"code\":\"DD_Configurator_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Schema_List\"},{\"code\":\"DD_Configurator_Schema_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Schema_Create", "Schema Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Schema_Create", "Schema Create", 1,2,
         "[{\"code\":\"DD_Configurator_Schema_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, {\"code\":\"DD_Configurator_Schema_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, {\"code\":\"DD_Configurator_Schema_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Schema_Create\",\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":false}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Schema_Update", "Schema Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Schema_Update", "Schema Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Schema_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Schema_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Schema_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Schema_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Schema_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Schema_Update\",\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
 
@@ -279,11 +279,11 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Connection_List", "Connection List", 
+        panelConfig = new PanelConfig("DD_Configurator_Connection_List", "Connection List", 3,1,
         "[{\"code\":\"DD_Configurator_Connection_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Connection_List\"},{\"code\":\"DD_Configurator_Connection_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Connection_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Connection_Create", "Connection Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Connection_Create", "Connection Create", 1,2,
         "["+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
@@ -296,7 +296,7 @@ public class DefaultDataService {
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Connection_Update", "Connection Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Connection_Update", "Connection Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
@@ -305,7 +305,7 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Connection_Update_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"password\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"url\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Id\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
-            "{\"code\":\"DD_Configurator_Connection_Update_F_Connection_Id\",\"type\":\"TEXT\",\"label\":\"Connection Id\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"connectionconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Connection_Update_F_Connection_Id\",\"type\":\"TEXT\",\"label\":\"Connection Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"connectionconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Connection_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Connection_Update\",\"DD_DevDash_Connection_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
 
@@ -338,14 +338,14 @@ public class DefaultDataService {
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
-        panelConfig = new PanelConfig("DD_Configurator_Query_List", "Query List", 
+        panelConfig = new PanelConfig("DD_Configurator_Query_List", "Query List", 3,1,
         "["+
             "{\"code\":\"DD_Configurator_Query_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Query_List\"}," + 
             "{\"code\":\"DD_Configurator_Query_List_Page1\",\"type\":\"PAGINATOR\", \"exeQuery\":[\"DD_DevDash_Query_List\"], \"offsetRC\":\"DD_Configurator_Query_List_Table1_offset\", \"limitRC\":\"DD_Configurator_Query_List_Table1_limit\"}," + 
             "{\"code\":\"DD_Configurator_Query_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Query_List\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
-        panelConfig = new PanelConfig("DD_Configurator_Query_Create", "Query Create", 
+        panelConfig = new PanelConfig("DD_Configurator_Query_Create", "Query Create", 1,2,
         "["+
             "{\"code\":\"DD_Configurator_Query_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
@@ -356,14 +356,14 @@ public class DefaultDataService {
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
-        panelConfig = new PanelConfig("DD_Configurator_Query_Update", "Query Update", 
+        panelConfig = new PanelConfig("DD_Configurator_Query_Update", "Query Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Query_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"description\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"ddl_type\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryString\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Id\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
-            "{\"code\":\"DD_Configurator_Query_Update_F_Query_Id\",\"type\":\"TEXT\",\"label\":\"Query Id\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryConfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Query_Update_F_Query_Id\",\"type\":\"TEXT\",\"label\":\"Query Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryConfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Query_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Query_Update\",\"DD_DevDash_Query_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
 
