@@ -25,6 +25,7 @@
         <module>web</module>
         <module>data</module>
         <module>execute-service</module>
+        <module>security-service</module>
     </modules>
 
 	<dependencies>

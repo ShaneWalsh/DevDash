@@ -6,21 +6,14 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
-import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-
 import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.DashboardConfigRepository;
 import dev.dash.dao.PanelConfigRepository;
@@ -28,7 +21,7 @@ import dev.dash.dao.QueryConfigRepository;
 import dev.dash.dao.SchemaConfigRepository;
 import dev.dash.dao.TabConfigRepository;
 import dev.dash.service.QueryExecutorService;
-import dev.dash.service.data.DefaultDataService;
+import dev.dash.setup.DefaultDataService;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,7 +63,7 @@ public class DevDashApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception 
     {       
-        defaultDataService.setupDefaultScreens();
+        defaultDataService.setupAllData();
         // Optional<EmployeeEntity> emp = repository.findById(2L);
  
         // logger.info("Employee id 2 -> {}", emp.get());
@@ -93,20 +86,6 @@ public class DevDashApplication implements CommandLineRunner {
 	// 	};
     // }
     
-    //https://stackoverflow.com/questions/55680170/angular-7-and-spring-boot-app-no-access-control-allow-origin-header-is-pres
-    @Bean
-    public CorsFilter corsFilter() {
-        final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
-        final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("*"));
-        config.setAllowedHeaders(Arrays.asList("Origin", "Content-Type", "Accept"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }
 
 	public void part2() throws ClassNotFoundException {
 		

@@ -1,16 +1,18 @@
-package dev.dash.service.data;
+package dev.dash.setup;
 
 import java.util.Arrays;
 import java.util.HashSet;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.dash.dao.*;
 import dev.dash.enums.DatabaseLanguageEnum;
 import dev.dash.enums.DdlTypeEnum;
+import dev.dash.enums.UserTypeEnum;
 import dev.dash.model.*;
-import dev.dash.service.QueryExecutorService;
 
 /**
  * Initialises the application db with all of the default configs for the dashboard building.
@@ -19,25 +21,41 @@ import dev.dash.service.QueryExecutorService;
 public class DefaultDataService {
     
     @Autowired
-    DashboardConfigRepository dashboardConfigRepository;
+    private SecurityUserRepository securityUserRepository;
 
     @Autowired
-    TabConfigRepository tabConfigRepository;
+    private DashboardConfigRepository dashboardConfigRepository;
 
     @Autowired
-    PanelConfigRepository panelConfigRepository;
+    private TabConfigRepository tabConfigRepository;
 
     @Autowired
-    SchemaConfigRepository schemaConfigRepository;    
+    private PanelConfigRepository panelConfigRepository;
+
+    @Autowired
+    private SchemaConfigRepository schemaConfigRepository;    
     
     @Autowired
-    QueryConfigRepository queryConfigRepository; 
+    private QueryConfigRepository queryConfigRepository; 
 
     @Autowired
-    ConnectionConfigRepository connectionConfigRepository;
+    private ConnectionConfigRepository connectionConfigRepository;
 
     @Autowired
-    QueryExecutorService queryExecutorService;
+    private PasswordEncoder passwordEncoder;
+
+    @Value("${dd.default.admin.password}")
+    private String defaultAdminPassword;
+
+    public void setupAllData(){
+        this.setupSecurityAndRoles();
+        this.setupDefaultScreens();
+    }
+
+    public void setupSecurityAndRoles() {
+        SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
+        this.securityUserRepository.saveAndFlush(securityUser);
+    }
 
     public void setupDefaultScreens(){
         // setup schema's
