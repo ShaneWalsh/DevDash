@@ -21,6 +21,9 @@ import dev.dash.model.*;
 public class DefaultDataService {
     
     @Autowired
+    private SecurityRoleRepository securityRoleRepository;
+
+    @Autowired
     private SecurityUserRepository securityUserRepository;
 
     @Autowired
@@ -53,6 +56,15 @@ public class DefaultDataService {
     }
 
     public void setupSecurityAndRoles() {
+        SecurityRole securityRoleParent = new SecurityRole("DD_Configurator_Parent","Parent Role to access all DD configs, typically an Admin.");
+        this.securityRoleRepository.saveAndFlush(securityRoleParent);
+
+        SecurityRole securityRoleDashboard = new SecurityRole("DD_Configurator_Dashboard","Role to crud DevDash Dashboards, typically a developer.",securityRoleParent);
+        this.securityRoleRepository.saveAndFlush(securityRoleDashboard);
+
+        SecurityRole securityRoleQuery = new SecurityRole("DD_Configurator_Query","Role to crud DevDash Queries, typically a developer.", securityRoleParent);
+        this.securityRoleRepository.saveAndFlush(securityRoleQuery);
+
         SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
         this.securityUserRepository.saveAndFlush(securityUser);
     }

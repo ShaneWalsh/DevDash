@@ -39,9 +39,9 @@ public class SecurityUser {
     private String userType;
 
     public SecurityUser(String username, String password, String userType) {
-        this.username = username;
-        this.password = password;
-        this.userType = userType;
+        this.setUsername(username);
+        this.setPassword(password);
+        this.setUserType(userType);
     }
     
     
