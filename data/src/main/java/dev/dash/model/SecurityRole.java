@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -44,6 +45,9 @@ public class SecurityRole {
     @OneToMany(mappedBy="parentSecurityRole", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval=false)
     private Set<SecurityRole> children = new HashSet<SecurityRole>();
 
+    @ManyToMany(mappedBy="securityRolesSet")
+    private Set<SecurityUser> securityUsersSet;
+
     public SecurityRole(String code, String description) {
         this.setCode(code);
         this.setDescription(description);
@@ -53,6 +57,14 @@ public class SecurityRole {
         this.setCode(code);
         this.setDescription(description);
         this.setParentSecurityRole(parentSecurityRole);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (code == null ? 0 : code.hashCode());
+        hash = 31 * hash + (description == null ? 0 : description.hashCode());
+        return hash;
     }
     
 }

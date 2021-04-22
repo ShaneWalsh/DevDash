@@ -61,6 +61,10 @@ public class ConnectionConfig {
     @JoinColumn(name = "schemaconfig_id", nullable = false)
     private SchemaConfig schemaConfig;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "securityRole_id", nullable = true)
+    private SecurityRole securityRole;
+
     public ConnectionConfig(){}
 
     public ConnectionConfig(String code, String name) {

@@ -2,6 +2,8 @@ package dev.dash.security;
 
 import java.util.ArrayList;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +14,7 @@ import dev.dash.dao.SecurityUserRepository;
 import dev.dash.model.SecurityUser;
 import dev.dash.security.util.JwtUtil;
 
+@Transactional
 @Service
 public class DevDashUserDetailsServiceImpl implements DevDashUserDetailsService {
 

@@ -1,7 +1,10 @@
 package dev.dash.setup;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
+
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +20,7 @@ import dev.dash.model.*;
 /**
  * Initialises the application db with all of the default configs for the dashboard building.
  */
+@Transactional
 @Service
 public class DefaultDataService {
     
@@ -66,6 +70,8 @@ public class DefaultDataService {
         this.securityRoleRepository.saveAndFlush(securityRoleQuery);
 
         SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
+        securityUser.setSecurityRolesSet( new HashSet( Arrays.asList( securityRoleParent ) ) );
+        //securityRoleParent.setSecurityUsersSet(new HashSet(Arrays.asList(securityUser)));
         this.securityUserRepository.saveAndFlush(securityUser);
     }
 

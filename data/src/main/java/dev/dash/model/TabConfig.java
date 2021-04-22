@@ -41,6 +41,10 @@ public class TabConfig{
     @JoinColumn(name = "dashboardconfig_id", nullable = false)
     private DashboardConfig dashboardConfig;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "securityRole_id", nullable = true)
+    private SecurityRole securityRole;
+
     protected TabConfig() {
     }
 

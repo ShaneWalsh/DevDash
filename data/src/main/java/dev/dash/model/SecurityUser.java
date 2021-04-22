@@ -2,6 +2,7 @@ package dev.dash.model;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,8 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -37,6 +38,13 @@ public class SecurityUser {
 
     @Column(name="userType")
     private String userType;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+    name = "securityUser_to_securityRole", 
+    joinColumns = @JoinColumn(name = "securityUser_id"), 
+    inverseJoinColumns = @JoinColumn(name = "securityRole_id"))
+    private Set<SecurityRole> securityRolesSet;
 
     public SecurityUser(String username, String password, String userType) {
         this.setUsername(username);

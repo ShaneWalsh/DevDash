@@ -42,6 +42,10 @@ public class QueryConfig {
     @JoinColumn(name = "schemaconfig_id", nullable = false)
     private SchemaConfig schemaConfig;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "securityRole_id", nullable = true)
+    private SecurityRole securityRole;
+
     public QueryConfig(){}
 
     public QueryConfig(String code, String description, String queryString) {
