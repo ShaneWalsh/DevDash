@@ -3,7 +3,6 @@ package dev.dash.service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -18,11 +17,11 @@ import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.body.QueryExecution;
 import dev.dash.model.body.SchemaConnection;
+import dev.dash.security.SecurityLogicService;
 import dev.dash.service.util.QueryStringParser;
 import lombok.extern.slf4j.Slf4j;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 @Slf4j
 @Service
@@ -33,10 +32,14 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
 
     @Autowired
     ConnectionConfigRepository connectionConfigRepository;
+
+    @Autowired
+    SecurityLogicService securityLogicService;
  
 	public JSONArray processQuery(QueryExecution queryExecution) throws SQLException {
         // todo workout the connection code!
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
+        log.info("has role : " + securityLogicService.checkUserHasRole(queryConfig.getSecurityRole()));
         String schemaCode = queryConfig.getSchemaConfig().getCode();
         SchemaConnection schemaConnection = queryExecution.getSchemaToConnectionsArray().stream().filter(s -> s.getSchemaCode().equalsIgnoreCase(schemaCode)).findFirst().orElse(null);
         if(schemaConnection == null) return null; //todo logging
