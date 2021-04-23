@@ -43,7 +43,9 @@ public class PanelConfig{
     @Column(name="showRefresh")
 	private boolean showRefresh;
 
-	@Column(name="elements", columnDefinition = "TEXT") // BLOB or TEXT or LOB or length=1000?
+    // BLOB or TEXT or LOB or length=1000? Column definition only works in certain DBS
+    // So Length maybe the safer option
+	@Column(name="elements", columnDefinition = "TEXT") 
     private String elements;
 
     @JsonIgnore

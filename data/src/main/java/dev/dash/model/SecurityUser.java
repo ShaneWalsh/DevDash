@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import dev.dash.security.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "securityUser")
-public class SecurityUser {
+public class SecurityUser implements Auditable{
  
 	@Id
 	@Column(name="securityUser_id")
@@ -39,6 +40,9 @@ public class SecurityUser {
     @Column(name="userType")
     private String userType;
 
+    @Column(name="disabledUser")
+    private boolean disabledUser;
+
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
     name = "securityUser_to_securityRole", 
@@ -50,6 +54,7 @@ public class SecurityUser {
         this.setUsername(username);
         this.setPassword(password);
         this.setUserType(userType);
+        this.disabledUser = false;
     }
     
     

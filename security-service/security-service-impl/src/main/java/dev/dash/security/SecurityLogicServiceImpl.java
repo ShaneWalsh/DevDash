@@ -12,17 +12,17 @@ import dev.dash.model.SecurityRole;
 public class SecurityLogicServiceImpl implements SecurityLogicService {
 
     @Override
-    public boolean checkUserHasRole(String requiredRole) {
-        boolean anyMatch = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equalsIgnoreCase(requiredRole));
-        return anyMatch;
-    }
-
-    @Override
     public boolean checkUserHasRole(SecurityRole requiredRole) {
         if( requiredRole == null ){
             return true;
         }
         return checkUserHasRole(requiredRole.getCode());
+    }
+
+    @Override
+    public boolean checkUserHasRole(String requiredRole) {
+        boolean anyMatch = SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equalsIgnoreCase(requiredRole));
+        return anyMatch;
     }
     
 }

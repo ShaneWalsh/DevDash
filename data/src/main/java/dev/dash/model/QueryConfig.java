@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import dev.dash.enums.DdlTypeEnum;
+import dev.dash.security.Auditable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "queryconfig")
-public class QueryConfig {
+public class QueryConfig implements Auditable{
 	@Id
 	@Column(name="queryConfig_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

@@ -11,12 +11,14 @@ import org.springframework.stereotype.Service;
 
 import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
+import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.body.QueryExecution;
 import dev.dash.model.body.SchemaConnection;
+import dev.dash.security.AuditLogicService;
 import dev.dash.security.SecurityLogicService;
 import dev.dash.service.util.QueryStringParser;
 import lombok.extern.slf4j.Slf4j;
@@ -35,11 +37,16 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
 
     @Autowired
     SecurityLogicService securityLogicService;
+
+    @Autowired
+    AuditLogicService auditLogicService;
  
 	public JSONArray processQuery(QueryExecution queryExecution) throws SQLException {
         // todo workout the connection code!
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
+
         log.info("has role : " + securityLogicService.checkUserHasRole(queryConfig.getSecurityRole()));
+
         String schemaCode = queryConfig.getSchemaConfig().getCode();
         SchemaConnection schemaConnection = queryExecution.getSchemaToConnectionsArray().stream().filter(s -> s.getSchemaCode().equalsIgnoreCase(schemaCode)).findFirst().orElse(null);
         if(schemaConnection == null) return null; //todo logging
@@ -67,10 +74,13 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
      * @throws SQLException
      */
     public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) throws SQLException {
+
+        // TODO security
+        auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData.asJson());
         // create the connection
         Connection connection = createConnection(connectionConfig);
         // replace variables in the queryStr
-        // todo add this logic
+        // TODO add this logic
         // execute the query
         try {
             String query = QueryStringParser.parseAndReplaceQueryString(queryConfig,executionData);

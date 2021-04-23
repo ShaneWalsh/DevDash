@@ -1,6 +1,7 @@
 package dev.dash.model;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -61,10 +62,7 @@ public class SecurityRole {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 31 * hash + (code == null ? 0 : code.hashCode());
-        hash = 31 * hash + (description == null ? 0 : description.hashCode());
-        return hash;
+        return Objects.hash((code == null ? 0 : code.hashCode()),(description == null ? 0 : description.hashCode()));
     }
     
 }
