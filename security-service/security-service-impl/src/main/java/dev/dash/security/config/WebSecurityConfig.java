@@ -14,9 +14,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 import dev.dash.security.DevDashUserDetailsService;
 import dev.dash.security.filter.JwtRequestFilter;
+import dev.dash.security.filter.TaggingFilter;
 
 @EnableWebSecurity
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,6 +28,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
 	private JwtRequestFilter jwtRequestFilter;
+
+	@Autowired
+	private TaggingFilter taggingFilter;
+
+	@Autowired
+	private CorsFilter corsFilter;
 
 	@Value( "${encoder.key.secret}" )
     private String encoderKey;
@@ -49,13 +57,15 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.cors().and().csrf().disable()
+		httpSecurity.csrf().disable()
 				.authorizeRequests().antMatchers("/auth").permitAll().
 						anyRequest().authenticated().and().
 						exceptionHandling().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-
+				
+		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+					.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
+					.addFilterBefore(taggingFilter, UsernamePasswordAuthenticationFilter.class);
 	}
     
 }

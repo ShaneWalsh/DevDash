@@ -4,6 +4,8 @@ import dev.dash.enums.AuditEventTypeEnum;
 
 public interface AuditLogicService {
     
+    public static final String CORRELATION_ID = "correlation-id";
+
     /**
      * Create an Audit entry for an entity CRUDE event
      * @param auditable the entity

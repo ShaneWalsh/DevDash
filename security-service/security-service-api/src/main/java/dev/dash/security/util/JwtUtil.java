@@ -16,6 +16,8 @@ import java.util.function.Function;
 @Service
 public class JwtUtil {
 
+    public static final String X_CORRELATION_ID = "X-Correlation-Id";
+
     @Value( "${claim.key.secret}" )
     private String secretClaimKey;
 

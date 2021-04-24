@@ -5,7 +5,10 @@ public enum AuditEventTypeEnum {
     EntityInsert,
     EntityUpdate,
     EntityDelete,
-    ExecuteQuery;
+    ExecuteQuery,
+
+    LoginSuccess,
+    LoginFailed;
 
     
 }

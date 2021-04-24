@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,7 +37,8 @@ public class AuditLogicServiceImpl  implements AuditLogicService {
 
     private void insertAudit(String eventType, String securityUser, String dataJson, String objectType, Long objectId){
         // todo get the UUID from the session, x-correlation-id in the header, add filter to extract it and put it in the MDC
-        UUID corId = UUID.randomUUID();
+        String corIdStr = MDC.get(AuditLogicService.CORRELATION_ID);
+        UUID corId = (corIdStr != null) ? UUID.fromString(corIdStr) : UUID.randomUUID();
 
         AuditLog auditLog = new AuditLog( corId, eventType, new Timestamp((new Date()).getTime()), 
             securityUser, objectType, objectId, dataJson);

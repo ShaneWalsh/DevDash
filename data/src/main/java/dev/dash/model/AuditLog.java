@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Type;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +29,7 @@ public class AuditLog {
     private Long id;
 
     @Column(name="corId")
+    @Type(type="uuid-char")
     private UUID corId;
 
     @Column(name="eventType")
