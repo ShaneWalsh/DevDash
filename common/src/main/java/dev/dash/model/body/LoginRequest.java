@@ -1,5 +1,6 @@
 package dev.dash.model.body;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,4 +11,8 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
     String username;
     String password;
+
+    void toJson( ) {
+        JSONObject jo = new JSONObject();
+    }
 }
