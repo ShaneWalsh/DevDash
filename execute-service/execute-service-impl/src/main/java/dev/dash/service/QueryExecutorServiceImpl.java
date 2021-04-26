@@ -42,65 +42,83 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
     AuditLogicService auditLogicService;
  
 	public JSONArray processQuery(QueryExecution queryExecution) throws SQLException {
-        // todo workout the connection code!
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
-
-        log.info("has role : " + securityLogicService.checkUserHasRole(queryConfig.getSecurityRole()));
-
+        if(queryConfig == null) {
+            log.warn("ProcessQuery failure. No query with the code: {}", queryExecution.getQueryCode());
+            return null;  
+        } 
         String schemaCode = queryConfig.getSchemaConfig().getCode();
+
         SchemaConnection schemaConnection = queryExecution.getSchemaToConnectionsArray().stream().filter(s -> s.getSchemaCode().equalsIgnoreCase(schemaCode)).findFirst().orElse(null);
-        if(schemaConnection == null) return null; //todo logging
+        if(schemaConnection == null) {
+            log.warn("ProcessQuery failure. No schema with the code: {}", schemaCode);
+            return null;  
+        } 
+
         ConnectionConfig connectionConfig = connectionConfigRepository.findByCode(schemaConnection.getConnectionCode());
-        if(connectionConfig == null) return null; //todo logging
+        if(connectionConfig == null) {
+            log.warn("ProcessQuery failure. No connection with the code: {}",schemaConnection.getConnectionCode());
+            return null;  
+        } 
 
         return this.processQuery(queryConfig,connectionConfig,queryExecution.getExeData());
 	}
 
     public JSONArray processQuery(String queryCode, String connectionCode,ExecutionData executionData) throws SQLException {
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryCode);
-        if(queryConfig == null) return null; // todo logging
+        if(queryConfig == null) {
+            log.warn("ProcessQuery failure. No query with the code: {}", queryCode);
+            return null;  
+        } 
+
         ConnectionConfig connectionConfig = connectionConfigRepository.findByCode(connectionCode);
-        if(connectionConfig == null) return null; //todo logging
+        if(connectionConfig == null) {
+            log.warn("ProcessQuery failure. No connection with the code: {}",connectionCode);
+            return null;  
+        } 
+
         return processQuery(queryConfig, connectionConfig, executionData);
     }
 
     /**
-     * Execute a query and return the result in json format
+     * Execute a query on the selected connection and return the result in json format
      * 
-     * @param executionData
-     * 
-     * @param queryCode     TODO add in a map here for the different panels and
-     *                      their values, which can be used in the query.
+     * @param queryConfig
+     * @param connectionConfig
+     * @param executionData 
      * @throws SQLException
      */
     public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) throws SQLException {
 
-        // TODO security
-        auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData.asJson());
-        // create the connection
-        Connection connection = createConnection(connectionConfig);
-        // replace variables in the queryStr
-        // TODO add this logic
-        // execute the query
-        try {
-            String query = QueryStringParser.parseAndReplaceQueryString(queryConfig,executionData);
-            if(DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
-                ResultSet rs = executeQuery(query, connection, executionData);
-                JSONArray jsonArray = jsonify(rs);
-                return jsonArray;
-            } else {
-                int res = executeUpdate(query, connection, executionData);
-                log.info("executeUpdate "+queryConfig.getCode()+" : affected rows:" + res);
-                JSONArray jsonArray = new JSONArray();
-                jsonArray.put(new String[]{"Affected Rows : "+res});
-                return jsonArray;
+        if( !checkUserHasPermission(queryConfig,connectionConfig) ){
+            auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryUserLackingRole, executionData);
+            return new JSONArray();
+        } else {
+            auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData);
+            // create the connection
+            Connection connection = createConnection(connectionConfig);
+
+            try { // execute the query
+                String query = QueryStringParser.parseAndReplaceQueryString(queryConfig,executionData);
+                if(DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
+                    ResultSet rs = executeQuery(query, connection, executionData);
+                    JSONArray jsonArray = jsonify(rs);
+                    return jsonArray;
+                } else {
+                    int res = executeUpdate(query, connection, executionData);
+                    log.info("Execute Update "+queryConfig.getCode()+" : affected rows:" + res);
+                    JSONArray jsonArray = new JSONArray();
+                    jsonArray.put(new String[]{"Affected Rows : "+res});
+                    return jsonArray;
+                }
+            } catch (SQLException e) {
+                auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryFailed, executionData);
+                e.printStackTrace();
+            } finally { // close the connection
+                connection.close();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally { // close the connection
-            connection.close();
         }
-        return null;
+        return new JSONArray();
     }
 
     private ResultSet executeQuery(String query, Connection connection, ExecutionData executionData) throws SQLException {
@@ -120,8 +138,15 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
 
     private Connection createConnection(ConnectionConfig connectionConfig) throws SQLException {
         Connection connection = null;
-        connection = DriverManager.getConnection(connectionConfig.getUrl(),connectionConfig.getUsername(),connectionConfig.getPassword());
+        connection = DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUsername(), connectionConfig.getPassword());
         return connection;
     }
 
+    private boolean checkUserHasPermission ( QueryConfig queryConfig, ConnectionConfig connectionConfig ) {
+        if( !securityLogicService.checkUserHasRole(queryConfig.getSecurityRole() ) ) return false;
+        if( !securityLogicService.checkUserHasRole(connectionConfig.getSecurityRole() ) ) return false;
+        if( !securityLogicService.checkUserHasRole(queryConfig.getSchemaConfig().getSecurityRole() ) ) return false;
+        if( !securityLogicService.checkUserHasRole(connectionConfig.getSchemaConfig().getSecurityRole() ) ) return false;
+        return true;
+    }
 }

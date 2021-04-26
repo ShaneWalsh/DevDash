@@ -11,8 +11,4 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
     String username;
     String password;
-
-    void toJson( ) {
-        JSONObject jo = new JSONObject();
-    }
 }

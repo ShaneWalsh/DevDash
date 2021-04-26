@@ -35,6 +35,11 @@ public class AuditLogicServiceImpl  implements AuditLogicService {
     }
 
     @Override
+    public void auditEntityEvent(Auditable auditable, AuditEventTypeEnum auditEntityChange, Object pojo) {
+        auditEntityEvent( auditable, auditEntityChange, JsonUtil.toJSON(pojo) );
+    }
+
+    @Override
     public void auditEntityEvent(Auditable auditable, AuditEventTypeEnum auditEntityChange, String jsonData) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if( authentication != null && authentication.isAuthenticated() ) {

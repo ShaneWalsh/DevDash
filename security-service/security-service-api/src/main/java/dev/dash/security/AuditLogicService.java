@@ -29,6 +29,14 @@ public interface AuditLogicService {
      * @param auditEntityChange the change
      * @param jsonData the data for the event
      */
+    public void auditEntityEvent( Auditable auditable, AuditEventTypeEnum auditEntityChange, Object pojo);
+
+    /**
+     * Create an Audit entry for an entity CRUDE event
+     * @param auditable the entity
+     * @param auditEntityChange the change
+     * @param jsonData the data for the event
+     */
     public void auditEntityEvent( Auditable auditable, AuditEventTypeEnum auditEntityChange, String jsonData );
 
 }

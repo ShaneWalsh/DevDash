@@ -15,6 +15,8 @@ import dev.dash.model.body.LoginRequest;
 import dev.dash.model.body.LoginResponse;
 import dev.dash.security.AuditLogicService;
 import dev.dash.security.DevDashUserDetailsService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @RestController
 public class AuthController {
@@ -36,14 +38,22 @@ public class AuthController {
 			);
 		}
 		catch (BadCredentialsException e) {
-			auditLogicService.auditEntityEvent(loginRequest, AuditEventTypeEnum.LoginFailed);
+			auditLogicService.auditEntityEvent(new AuditUsername(loginRequest.getUsername()), AuditEventTypeEnum.LoginFailed);
 			throw new Exception("Invalid Login", e);
 		}
 
 		final String jwt = devDashUserDetailsService.generateJWT(loginRequest.getUsername());
-		auditLogicService.auditEntityEvent(loginRequest, AuditEventTypeEnum.LoginSuccess);
+		auditLogicService.auditEntityEvent(new AuditUsername(loginRequest.getUsername()), AuditEventTypeEnum.LoginSuccess);
 
 		return ResponseEntity.ok(new LoginResponse(jwt));
 	}
 
+	/**
+	 * The Audit logic needs a POJO for storing the data as JSON
+	 */
+	@Data
+	@AllArgsConstructor
+	class AuditUsername {
+		String username;
+	}
 }

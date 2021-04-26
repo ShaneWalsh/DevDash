@@ -27,6 +27,7 @@ import dev.dash.model.DashboardConfig;
 import dev.dash.model.PanelConfig;
 import dev.dash.model.SchemaConfig;
 import dev.dash.model.TabConfig;
+import dev.dash.security.SecurityLogicService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -40,10 +41,13 @@ public class DashboardConfigController {
     @Autowired
     TabConfigRepository tabConfigRepository;
 
+    @Autowired
+    SecurityLogicService securityLogicService;
+
 	@GetMapping("/list")
 	public List<DashboardListUI> list() {
 		List<DashboardListUI> dashboards = dashboardConfigRepository.findAll()
-            .stream().map(dashboard -> new DashboardListUI(dashboard.getCode(),dashboard.getName())).collect(Collectors.toList());
+            .stream().filter(dashboard -> securityLogicService.checkUserHasRole(dashboard.getSecurityRole())).map(dashboard -> new DashboardListUI(dashboard.getCode(),dashboard.getName())).collect(Collectors.toList());
         return dashboards;
     }
 
@@ -52,7 +56,6 @@ public class DashboardConfigController {
         produces = { "application/json" }, 
         method = RequestMethod.GET)
 	public String getDashboardInstanceUsingCode( @PathVariable String code) {
-        System.out.println(code);
 		DashboardConfig dashboardConfig = dashboardConfigRepository.findByCode(code);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -64,7 +67,6 @@ public class DashboardConfigController {
             String serialized = mapper.writeValueAsString(dashboardConfig);
             return serialized;
         } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;

@@ -20,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Entity
 @Table(name = "queryconfig")
-public class QueryConfig implements Auditable{
+public class QueryConfig implements Auditable {
 	@Id
 	@Column(name="queryConfig_id")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

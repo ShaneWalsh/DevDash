@@ -1,7 +1,6 @@
 package dev.dash.setup;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 
 import javax.transaction.Transactional;
@@ -24,6 +23,12 @@ import dev.dash.model.*;
 @Service
 public class DefaultDataService {
     
+    private static final String DD_CONFIGURATOR_DASHBOARD = "DD_Configurator_Dashboard";
+
+    private static final String DD_CONFIGURATOR_QUERY = "DD_Configurator_Query";
+
+    private static final String DD_CONFIGURATOR_PARENT = "DD_Configurator_Parent";
+
     @Autowired
     private SecurityRoleRepository securityRoleRepository;
 
@@ -60,17 +65,17 @@ public class DefaultDataService {
     }
 
     public void setupSecurityAndRoles() {
-        SecurityRole securityRoleParent = new SecurityRole("DD_Configurator_Parent","Parent Role to access all DD configs, typically an Admin.");
+        SecurityRole securityRoleParent = new SecurityRole(DD_CONFIGURATOR_PARENT,"Parent Role to access all DD configs, typically an Admin.");
         this.securityRoleRepository.saveAndFlush(securityRoleParent);
 
-        SecurityRole securityRoleDashboard = new SecurityRole("DD_Configurator_Dashboard","Role to crud DevDash Dashboards, typically a developer.",securityRoleParent);
+        SecurityRole securityRoleDashboard = new SecurityRole(DD_CONFIGURATOR_DASHBOARD,"Role to crud DevDash Dashboards, typically a developer.",securityRoleParent);
         this.securityRoleRepository.saveAndFlush(securityRoleDashboard);
 
-        SecurityRole securityRoleQuery = new SecurityRole("DD_Configurator_Query","Role to crud DevDash Queries, typically a developer.", securityRoleParent);
+        SecurityRole securityRoleQuery = new SecurityRole(DD_CONFIGURATOR_QUERY,"Role to crud DevDash Queries, typically a developer.", securityRoleParent);
         this.securityRoleRepository.saveAndFlush(securityRoleQuery);
 
         SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
-        securityUser.setSecurityRolesSet( new HashSet( Arrays.asList( securityRoleParent ) ) );
+        securityUser.setSecurityRolesSet( new HashSet<>( Arrays.asList( securityRoleParent ) ) );
         //securityRoleParent.setSecurityUsersSet(new HashSet(Arrays.asList(securityUser)));
         this.securityUserRepository.saveAndFlush(securityUser);
     }
@@ -78,6 +83,7 @@ public class DefaultDataService {
     public void setupDefaultScreens(){
         // setup schema's
         SchemaConfig configuratorScheme = new SchemaConfig("DD_DevDash", "DevDash DB");
+        configuratorScheme.setSecurityRole( this.securityRoleRepository.findByCode( DD_CONFIGURATOR_QUERY ) );
         schemaConfigRepository.saveAndFlush( configuratorScheme );
         // setup connections // todo replace with configurable variables from resources
         ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
@@ -120,6 +126,8 @@ public class DefaultDataService {
         DashboardConfig dashboardConfig = new DashboardConfig("DD_Configurator_Dash","Configurator Dash");
         // link the new scheme to the dash
         dashboardConfig.setSchemaConfigSet(new HashSet<SchemaConfig>(Arrays.asList(configuratorScheme)));
+        // set dashboard permission
+        dashboardConfig.setSecurityRole( this.securityRoleRepository.findByCode( DD_CONFIGURATOR_DASHBOARD ) );
         dashboardConfigRepository.saveAndFlush(dashboardConfig);
         TabConfig tabConfig  = new TabConfig("DD_Configurator_Dashboards","Dashboards",1,dashboardConfig);
         tabConfigRepository.saveAndFlush(tabConfig);

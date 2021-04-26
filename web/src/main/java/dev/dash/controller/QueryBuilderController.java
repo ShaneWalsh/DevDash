@@ -40,20 +40,20 @@ public class QueryBuilderController {
 	@GetMapping("/list")
 	public QueryBuilderData list() {
         List<SchemaConfig> schemaConfigs = schemaConfigRepository.findAll();
-        List<SchemaDTO> schemaDTOs = new ArrayList();
-        List<QueryDTO> queryDTOs = new ArrayList();
-        List<ConnectionDTO> connectionDTOs = new ArrayList();
+        List<SchemaDTO> schemaDTOs = new ArrayList<>();
+        List<QueryDTO> queryDTOs = new ArrayList<>();
+        List<ConnectionDTO> connectionDTOs = new ArrayList<>();
         for(SchemaConfig schemaConfig : schemaConfigs){
             SchemaDTO schemaDTO = new SchemaDTO();
             schemaDTO.setId(schemaConfig.getId());
             schemaDTO.setCode(schemaConfig.getCode());
             schemaDTO.setName(schemaConfig.getName());
-            List list = new ArrayList();
+            List<String> list = new ArrayList<>();
             for(QueryConfig queryConfig: schemaConfig.getQueryConfigsSet()){
                 list.add(queryConfig.getCode());
             }
             schemaDTO.setQueryCodeList(list);
-            list = new ArrayList();
+            list = new ArrayList<>();
             for(ConnectionConfig connectionConfig :schemaConfig.getConnectionConfigSet()){
                 list.add(connectionConfig.getCode());
             }

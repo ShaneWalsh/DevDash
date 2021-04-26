@@ -12,12 +12,4 @@ public class ExecutionData {
     private String tabConfigCode;
     private String elementSourcePanelCode;
     private Map<String,List<ElementData>> panelElementData;
-
-    /**
-     * TODO implement this properly to  store the query correctly.
-     * @return
-     */
-    public String asJson(){
-        return dashboardCode;
-    }
 }
