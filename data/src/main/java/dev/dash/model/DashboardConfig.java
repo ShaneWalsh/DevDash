@@ -13,6 +13,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import dev.dash.security.Auditable;
+
 import javax.persistence.JoinColumn;
 
 import lombok.Getter;
@@ -22,7 +25,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "dashboardconfig")
-public class DashboardConfig {
+public class DashboardConfig implements Auditable{
  
 	@Id
 	@Column(name="dashboardconfig_id")

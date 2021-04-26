@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import dev.dash.dao.DashboardConfigRepository;
 import dev.dash.dao.TabConfigRepository;
+import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.DashboardConfig;
 import dev.dash.model.PanelConfig;
 import dev.dash.model.SchemaConfig;
 import dev.dash.model.TabConfig;
+import dev.dash.security.AuditLogicService;
 import dev.dash.security.SecurityLogicService;
+import dev.dash.util.JsonUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -44,6 +47,9 @@ public class DashboardConfigController {
     @Autowired
     SecurityLogicService securityLogicService;
 
+    @Autowired
+    AuditLogicService auditLogicService;
+
 	@GetMapping("/list")
 	public List<DashboardListUI> list() {
 		List<DashboardListUI> dashboards = dashboardConfigRepository.findAll()
@@ -57,17 +63,20 @@ public class DashboardConfigController {
         method = RequestMethod.GET)
 	public String getDashboardInstanceUsingCode( @PathVariable String code) {
 		DashboardConfig dashboardConfig = dashboardConfigRepository.findByCode(code);
-
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(DashboardConfig.class, new DashboardConfigSerializer());
-        mapper.registerModule(module);
-
-        try {
-            String serialized = mapper.writeValueAsString(dashboardConfig);
-            return serialized;
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        if( securityLogicService.checkUserHasRole(dashboardConfig.getSecurityRole()) ){
+            ObjectMapper mapper = new ObjectMapper();
+            SimpleModule module = new SimpleModule();
+            module.addSerializer(DashboardConfig.class, new DashboardConfigSerializer());
+            mapper.registerModule(module);
+            try {
+                String serialized = mapper.writeValueAsString(dashboardConfig);
+                auditLogicService.auditEntityEvent(dashboardConfig, AuditEventTypeEnum.GetDashboard, JsonUtil.stringProp("code", code));
+                return serialized;
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        } else {
+            auditLogicService.auditEntityEvent(dashboardConfig, AuditEventTypeEnum.GetDashboardUserLackingRole, JsonUtil.stringProp("code", code));
         }
         return null;
     }

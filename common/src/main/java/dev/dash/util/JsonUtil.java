@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class JsonUtil {
     
+    private static final String JSON_STRING_VALUE = "{\"%s\":\"%s\"}";
+
     public static String toJSON(Object obj){
 
         ObjectMapper om = new ObjectMapper();
@@ -21,6 +23,13 @@ public class JsonUtil {
         // backup marshalling
         JSONObject jsonObj = new JSONObject(obj);
         return jsonObj.toString();
+    }
+
+    /**
+     * Sometimes we just want to store a single variable in the JSON data
+     */
+    public static String stringProp(String key, String value) {
+        return String.format(JSON_STRING_VALUE, key, value);
     }
 
 }
