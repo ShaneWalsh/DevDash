@@ -90,7 +90,7 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
      */
     public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) throws SQLException {
 
-        if( !checkUserHasPermission(queryConfig,connectionConfig) ){
+        if ( !checkUserHasPermission(queryConfig,connectionConfig) ) {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryUserLackingRole, executionData);
             return new JSONArray();
         } else {
@@ -99,8 +99,8 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
             Connection connection = createConnection(connectionConfig);
 
             try { // execute the query
-                String query = QueryStringParser.parseAndReplaceQueryString(queryConfig,executionData);
-                if(DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
+                String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
+                if ( DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
                     ResultSet rs = executeQuery(query, connection, executionData);
                     JSONArray jsonArray = jsonify(rs);
                     return jsonArray;

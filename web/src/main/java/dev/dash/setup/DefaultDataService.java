@@ -159,24 +159,28 @@ public class DefaultDataService {
      */ 
     public void setupTabScreens( SchemaConfig configuratorScheme, DashboardConfig dashboardScreens) {
         // setup queries
-        QueryConfig dashboardListQuery = new QueryConfig("DD_DevDash_Tab_List", "Tab List",
+        QueryConfig tabListQuery = new QueryConfig("DD_DevDash_Tab_List", "Tab List",
             "Select * from tabconfig", configuratorScheme);
-        queryConfigRepository.saveAndFlush(dashboardListQuery);
+        queryConfigRepository.saveAndFlush(tabListQuery);        
+        
+        QueryConfig dashboardSelectListQuery = new QueryConfig("DD_DevDash_Tab_Linkable_Dashboard", "Tab Link Dashboard Select List",
+            "Select dashboardconfig_id as value, name as label from dashboardconfig", configuratorScheme);
+        queryConfigRepository.saveAndFlush(dashboardSelectListQuery);
 				
-        QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Tab_Create", "Tab Create",
+        QueryConfig tabCreateQuery = new QueryConfig("DD_DevDash_Tab_Create", "Tab Create",
             "insert into tabconfig (code,name,displayOrder,dashboardconfig_id) values('${DD_Configurator_Tab_Create_F_Code}','${DD_Configurator_Tab_Create_F_Name}','${DD_Configurator_Tab_Create_F_Display}','${DD_Configurator_Tab_Create_F_dashConfigId}')", DdlTypeEnum.Insert.name(), configuratorScheme);
-        queryConfigRepository.saveAndFlush(dashboardCreateQuery);
+        queryConfigRepository.saveAndFlush(tabCreateQuery);
 
-        QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Tab_Update", "Tab Update",
+        QueryConfig tabUpdateQuery = new QueryConfig("DD_DevDash_Tab_Update", "Tab Update",
             "update tabconfig set code='${DD_Configurator_Tab_Update_F_Code}', name='${DD_Configurator_Tab_Update_F_Name}', displayOrder=${DD_Configurator_Tab_Update_F_DisplayOrder}, dashboardconfig_id=${DD_Configurator_Tab_Update_F_Dash_Id} where tabconfig_id = ${DD_Configurator_Tab_Update_F_Tab_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
-        queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
+        queryConfigRepository.saveAndFlush(tabUpdateQuery);
 
         TabConfig tabConfig  = new TabConfig("DD_Configurator_Tab","Tabs",2,dashboardScreens);
         tabConfigRepository.saveAndFlush(tabConfig);
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Tab_List", "Tab List", 3,1,
-        "[{\"code\":\"DD_Configurator_Tab_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Tab_List\"},{\"code\":\"DD_Configurator_Tab_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Tab_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Tab_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Tab_List\"},{\"code\":\"DD_Configurator_Tab_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Tab_List\",\"DD_DevDash_Tab_Linkable_Dashboard\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Tab_Create", "Tab Create", 1,2,
@@ -184,7 +188,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Tab_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Tab_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
             "{\"code\":\"DD_Configurator_Tab_Create_F_Display\",\"type\":\"TEXT\",\"label\":\"Display Order\"}, "+
-            "{\"code\":\"DD_Configurator_Tab_Create_F_dashConfigId\",\"type\":\"TEXT\",\"label\":\"Dashboard Config to Link\"}, "+
+            //"{\"code\":\"DD_Configurator_Tab_Create_F_dashConfigId\",\"type\":\"TEXT\",\"label\":\"Dashboard Config to Link\"}, "+
+            "{\"code\":\"DD_Configurator_Tab_Create_F_dashConfigId\",\"type\":\"SELECT\",\"label\":\"Dashboard Config to Link\", \"dataOn\":\"DD_DevDash_Tab_Linkable_Dashboard\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
             "{\"code\":\"DD_Configurator_Tab_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Tab_Create\",\"DD_DevDash_Tab_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   

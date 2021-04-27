@@ -36,7 +36,7 @@ public interface QueryExecutorService {
             int numColumns = rsmd.getColumnCount();
             JSONObject obj = new JSONObject();
             for (int i=1; i<=numColumns; i++) {
-                String column_name = rsmd.getColumnName(i);
+                String column_name = rsmd.getColumnLabel(i);
                 obj.put(column_name, rs.getObject(column_name));
             }
             json.put(obj);

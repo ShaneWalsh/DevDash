@@ -24,6 +24,7 @@ public interface QueryModelBlock {
      * Does a simple replacement for sql queries for single quotes.
      */
     default String replaceReplacementCode(String str, String replacementCode, String value) {
+        // TODO add null check here on value, it should not be null, what do we do in this scenario?
         String valueSafeSQL = value.replaceAll("'", "''");
         valueSafeSQL = valueSafeSQL.replaceAll(Pattern.quote("\\"), Matcher.quoteReplacement("\\\\")); // TODO remove both of these escapses once we move the Insert/Update/Delete to prepared statements
         return str.replaceAll(Pattern.quote("${"+replacementCode+"}"), Matcher.quoteReplacement(valueSafeSQL));
