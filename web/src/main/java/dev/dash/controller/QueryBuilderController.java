@@ -22,8 +22,9 @@ import dev.dash.model.builder.QueryDTO;
 import dev.dash.model.builder.SchemaDTO;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-
+@Slf4j
 @RestController
 @RequestMapping("queryBuilder")
 public class QueryBuilderController {
@@ -137,7 +138,6 @@ public class QueryBuilderController {
      */
     @PostMapping("/importdata")
 	public Integer importData(@RequestBody QueryBuilderData queryImport) {
-        // this data should map to a query data only? 
         for(SchemaDTO schemaDTO: queryImport.getSchemas()){
             SchemaConfig schemaConfig = new SchemaConfig(schemaDTO.getCode(), schemaDTO.getName());
             schemaConfigRepository.saveAndFlush(schemaConfig);
@@ -159,7 +159,7 @@ public class QueryBuilderController {
                 schemaConfigRepository.findByCode(queryDTO.getSchemaCode()));
             queryConfigRepository.saveAndFlush(queryConfig);
         }
-        System.out.println(queryImport);
+        log.info("Imported Query Data");
         return 200;
     }
 }

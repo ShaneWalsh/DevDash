@@ -4,8 +4,10 @@ import lombok.Data;
 
 @Data
 public class TabDTO {
+    private Long id;
     private String code;
     private String name;
 	private Integer displayOrder;
     private String dashboardConfig;
+    private String securityRole;
 }

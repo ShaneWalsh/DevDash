@@ -16,23 +16,19 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class PanelDTO {
+    private Long id;
     private String code; 
     private String name;
-    private Integer positionX;
-    private Integer positionY;
-    private Integer columnSizeX;
-    private Integer columnSizeY;    
-    private boolean showRefresh;
+    private Integer gridRow;
+    private Integer gridCol;
     private String elements;
     private String tabConfig;
+    private String securityRole;
 }
 
 class PanelDTODeserializer extends StdDeserializer<PanelDTO> { 
 
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 11223432L;
 
     public PanelDTODeserializer() {
         this(null); 
@@ -46,18 +42,17 @@ class PanelDTODeserializer extends StdDeserializer<PanelDTO> {
     public PanelDTO deserialize(JsonParser jp, DeserializationContext ctxt) 
       throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
-
+        
+        Long id = node.has("id") ? node.get("id").asLong(): null;
         String code = node.get("code").asText();
         String name = node.get("name").asText();
-        Integer positionX = 0;//node.get("positionX").asInt();
-        Integer positionY = 0;//node.get("positionY").asInt();
-        Integer columnSizeX = 0;// node.get("columnSizeX").asInt();
-        Integer columnSizeY = 0;//node.get("columnSizeY").asInt();
-        Boolean showRefresh = false; //node.get("showRefresh").asBoolean();
+        Integer gridRow = node.get("gridRow").asInt();
+        Integer gridCol = node.get("gridCol").asInt();
         JsonNode arr = node.get("elements");
         String elements = arr.toString();
         String tabConfig = node.get("tabConfig").asText();
+        String securityRole = node.has("securityRole") ? node.get("securityRole").asText():"";
 
-        return new PanelDTO(code,name,positionX,positionY,columnSizeX,columnSizeY,showRefresh,elements,tabConfig);
+        return new PanelDTO(id, code, name, gridRow, gridCol, elements, tabConfig, securityRole);
     }
 }

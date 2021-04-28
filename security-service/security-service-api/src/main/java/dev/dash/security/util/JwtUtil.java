@@ -54,7 +54,7 @@ public class JwtUtil {
 
     private String createToken(Map<String, Object> claims, String subject) {
         LocalDateTime time = LocalDateTime.now().plusDays(1);
-        Instant instant = time.toInstant(ZoneOffset.of(ZoneId.systemDefault().toString()));
+        Instant instant = time.atZone(ZoneId.systemDefault()).toInstant();
         Date expiryDate = Date.from(instant);
         return Jwts.builder().setClaims(claims).setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))

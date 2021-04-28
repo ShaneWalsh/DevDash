@@ -39,9 +39,6 @@ public class PanelConfig{
     
     @Column(name="gridCol")
     private Integer gridCol;  
-    
-    @Column(name="showRefresh")
-	private boolean showRefresh;
 
     // BLOB or TEXT or LOB or length=1000? Column definition only works in certain DBS
     // So Length maybe the safer option

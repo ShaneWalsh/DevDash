@@ -21,7 +21,9 @@ import dev.dash.model.builder.DashboardBuilderData;
 import dev.dash.model.builder.DashboardDTO;
 import dev.dash.model.builder.PanelDTO;
 import dev.dash.model.builder.TabDTO;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("dashboardBuilder")
 public class DashboardBuilderController {
@@ -45,9 +47,6 @@ public class DashboardBuilderController {
      */
     @PostMapping("/importdata")
 	public Integer importData(@RequestBody DashboardBuilderData dashboardBuilderData) {
-        // panels
-        // dash
-        // tabs, link tabs to panels, so they can be reused. Position data needs to linked to a separate object?
         for(DashboardDTO dashboardDTO: dashboardBuilderData.getDashboardConfigs()){
             DashboardConfig dashboardConfig = new DashboardConfig(dashboardDTO.getCode(), dashboardDTO.getName());
             dashboardConfigRepository.saveAndFlush(dashboardConfig);
@@ -73,12 +72,14 @@ public class DashboardBuilderController {
             PanelConfig panelConfig = new PanelConfig(
                 panelDTO.getCode(),
                 panelDTO.getName(),
+                panelDTO.getGridCol(),
+                panelDTO.getGridRow(),
                 panelDTO.getElements(), 
                 tabConfigRepository.findByCode(panelDTO.getTabConfig())
             );
             panelConfigRepository.saveAndFlush(panelConfig);
         }
-        System.out.println(dashboardBuilderData);
+        log.info("Dashboard data imported");
         return 200;
     }
 }

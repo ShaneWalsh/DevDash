@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ConnectionDTO {
-	private Long id;
+    private Long id;
     private String code; 
     private String name;
     private String connectionType;
@@ -14,6 +14,7 @@ public class ConnectionDTO {
     private String username;
     private String password;
     private String schemaCode;
+    private String securityRole;
 }
 
 
