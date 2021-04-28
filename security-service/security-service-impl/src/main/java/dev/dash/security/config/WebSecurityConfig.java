@@ -1,7 +1,5 @@
 package dev.dash.security.config;
 
-
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -57,12 +55,13 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		httpSecurity.csrf().disable()
-				.authorizeRequests().antMatchers("/auth").permitAll().
-						anyRequest().authenticated().and().
+		httpSecurity.csrf().disable() // crsf is disabled, but cors is enabled by default
+				.authorizeRequests().antMatchers("/auth").permitAll(). 	// requests to /auth will be allowed to pass through, no auth required
+						anyRequest().authenticated().and(). 			// any other request must be authenticated 
 						exceptionHandling().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 				
+				// add my filters before the Auth filter, log the user in if they have a valid session, cors, fish tagging requests
 		httpSecurity.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
 					.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
 					.addFilterBefore(taggingFilter, UsernamePasswordAuthenticationFilter.class);
