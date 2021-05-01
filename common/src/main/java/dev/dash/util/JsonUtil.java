@@ -18,7 +18,7 @@ public class JsonUtil {
         try {
             return om.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
-            log.error("Unable to marshall Pojo for audit logging", e);
+            log.error("Unable to marshall Pojo", e);
         }
         // backup marshalling
         JSONObject jsonObj = new JSONObject(obj);

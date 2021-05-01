@@ -11,6 +11,7 @@ import dev.dash.model.TabConfig;
 @Repository
 public interface TabConfigRepository extends JpaRepository<TabConfig, Long> {
     TabConfig findByCode(String code);
-
+    boolean existsByCode(String code);
+    
     Set<TabConfig> findByDashboardConfig(DashboardConfig dashboardConfig);
 }

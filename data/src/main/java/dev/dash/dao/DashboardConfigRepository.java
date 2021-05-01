@@ -8,4 +8,5 @@ import dev.dash.model.DashboardConfig;
 @Repository
 public interface DashboardConfigRepository extends JpaRepository<DashboardConfig, Long> {
     DashboardConfig findByCode(String code);
+    boolean existsByCode(String code);
 }

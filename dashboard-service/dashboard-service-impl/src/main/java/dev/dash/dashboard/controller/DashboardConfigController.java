@@ -1,5 +1,4 @@
-
-package dev.dash.controller;
+package dev.dash.dashboard.controller;
 
 import java.io.IOException;
 import java.util.List;

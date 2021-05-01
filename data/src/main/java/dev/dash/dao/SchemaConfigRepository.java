@@ -8,6 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface SchemaConfigRepository extends JpaRepository<SchemaConfig, Long> {
-
     SchemaConfig findByCode(String code);
+    boolean existsByCode(String code);
 }

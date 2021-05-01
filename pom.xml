@@ -24,6 +24,7 @@
         <module>common</module>
         <module>web</module>
         <module>data</module>
+        <module>dashboard-service</module>
         <module>execute-service</module>
         <module>security-service</module>
     </modules>

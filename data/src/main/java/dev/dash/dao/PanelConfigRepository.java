@@ -7,5 +7,6 @@ import dev.dash.model.PanelConfig;
 
 @Repository
 public interface PanelConfigRepository extends JpaRepository<PanelConfig, Long> {
-    
+    PanelConfig findByCode(String code);
+    boolean existsByCode(String code);
 }
