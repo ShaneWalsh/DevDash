@@ -46,12 +46,12 @@ class PanelDTODeserializer extends StdDeserializer<PanelDTO> {
         Long id = node.has("id") ? node.get("id").asLong(): null;
         String code = node.get("code").asText();
         String name = node.get("name").asText();
-        Integer gridRow = node.get("gridRow").asInt();
-        Integer gridCol = node.get("gridCol").asInt();
-        JsonNode arr = node.get("elements");
-        String elements = arr.toString();
-        String tabConfig = node.get("tabConfig").asText();
-        String securityRole = node.has("securityRole") ? node.get("securityRole").asText():"";
+        Integer gridRow = node.has("gridRow") ? node.get("gridRow").asInt() : 0;
+        Integer gridCol = node.has("gridCol") ? node.get("gridCol").asInt() : 0;
+        JsonNode arr = node.has("elements") ? node.get("elements") : null;
+        String elements = arr != null ? arr.toString() : "";
+        String tabConfig = node.has("tabConfig") ? node.get("tabConfig").asText(): null;
+        String securityRole = node.has("securityRole") ? node.get("securityRole").asText(): null;
 
         return new PanelDTO(id, code, name, gridRow, gridCol, elements, tabConfig, securityRole);
     }

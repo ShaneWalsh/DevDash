@@ -64,7 +64,8 @@ public class DashboardBuilderController {
                 tabDTO.getCode(),
                 tabDTO.getName(), 
                 tabDTO.getDisplayOrder(), 
-                dashboardConfigRepository.findByCode(tabDTO.getDashboardConfig()));
+                dashboardConfigRepository.findByCode(tabDTO.getDashboardConfig())
+            );
             
             tabConfigRepository.saveAndFlush(tabConfig);
         }
