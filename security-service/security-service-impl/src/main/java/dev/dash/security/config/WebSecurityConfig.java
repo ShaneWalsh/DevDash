@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import dev.dash.enums.UserTypeEnum;
 import dev.dash.security.DevDashUserDetailsService;
 import dev.dash.security.filter.JwtRequestFilter;
 import dev.dash.security.filter.TaggingFilter;
@@ -56,9 +57,13 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.csrf().disable() // crsf is disabled, but cors is enabled by default
-				.authorizeRequests().antMatchers("/auth").permitAll(). 	// requests to /auth will be allowed to pass through, no auth required
-						anyRequest().authenticated().and(). 			// any other request must be authenticated 
-						exceptionHandling().and().sessionManagement()
+				.authorizeRequests()
+					.antMatchers("/auth").permitAll() // requests to /auth will be allowed to pass through, no auth required
+					// only admins and configs and can import/export
+					.antMatchers("/**/importdata").hasAnyRole( UserTypeEnum.Admin.getRole(), UserTypeEnum.Configurator.getRole() ) 
+					.antMatchers("/**/exportdata").hasAnyRole( UserTypeEnum.Admin.getRole(), UserTypeEnum.Configurator.getRole() )
+					.anyRequest().authenticated().and() 			  // any other request must be authenticated 
+					.exceptionHandling().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 				
 				// add my filters before the Auth filter, log the user in if they have a valid session, cors, fish tagging requests

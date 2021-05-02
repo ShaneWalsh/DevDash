@@ -14,12 +14,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import dev.dash.dao.SecurityUserRepository;
+import dev.dash.enums.UserTypeEnum;
 import dev.dash.model.SecurityRole;
 import dev.dash.model.SecurityUser;
 import dev.dash.security.util.JwtUtil;
 import dev.dash.security.util.SecurityAuthority;
+import dev.dash.util.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
 @Transactional
+@Slf4j
 @Service
 public class DevDashUserDetailsServiceImpl implements DevDashUserDetailsService {
 
@@ -46,8 +50,15 @@ public class DevDashUserDetailsServiceImpl implements DevDashUserDetailsService 
         List<GrantedAuthority> roles = new ArrayList<>();
         Set<SecurityRole> sets = securityUser.getSecurityRolesSet();
         for(SecurityRole role : sets){
-            roles.add( new SecurityAuthority(role.getCode()));
+            if ( UserTypeEnum.isNotARole(role.getCode()) ) {
+                roles.add( new SecurityAuthority( role.getCode() ) );
+            } else {
+                log.error("User has a security role that matches a user type. This is not allowed and maybe an attempt to circumvent security: {}", role.getCode());
+            }
         }
+        // Adding the user type role. Has a ROLE_ prefix
+        if ( StringUtil.isVaildString(securityUser.getUserType()) ) 
+            roles.add( new SecurityAuthority( UserTypeEnum.valueOf(securityUser.getUserType()).getRoleWithPrefix() ) );
         User user = new User(securityUser.getUsername(), securityUser.getPassword(), roles);
         return user;
     }
