@@ -8,8 +8,11 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import dev.dash.execute.util.QueryStringParser;
+import dev.dash.execute.util.parsedQueryModel.ParsedQueryModel;
+import dev.dash.execute.util.parsedQueryModel.QueryModelBlock;
+import dev.dash.execute.util.parsedQueryModel.StringQueryModelBlock;
 import dev.dash.model.elements.ElementData;
-import dev.dash.service.util.QueryStringParser;
 
 public class RepeatableQueryModelBlockTest {
 

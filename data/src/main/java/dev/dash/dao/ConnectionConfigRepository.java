@@ -9,5 +9,5 @@ import dev.dash.model.ConnectionConfig;
 public interface ConnectionConfigRepository extends JpaRepository<ConnectionConfig, Long> {
 
     ConnectionConfig findByCode(String code);
-
+    boolean existsByCode(String code);
 }

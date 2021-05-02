@@ -1,4 +1,4 @@
-package dev.dash.service;
+package dev.dash.execute;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -13,6 +13,7 @@ import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.enums.DdlTypeEnum;
+import dev.dash.execute.util.QueryStringParser;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
@@ -20,7 +21,6 @@ import dev.dash.model.body.QueryExecution;
 import dev.dash.model.body.SchemaConnection;
 import dev.dash.security.AuditLogicService;
 import dev.dash.security.SecurityLogicService;
-import dev.dash.service.util.QueryStringParser;
 import lombok.extern.slf4j.Slf4j;
 
 import org.json.JSONArray;

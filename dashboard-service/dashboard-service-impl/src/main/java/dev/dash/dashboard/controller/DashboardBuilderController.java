@@ -25,8 +25,6 @@ public class DashboardBuilderController {
 
     /**
      * import method for dashboard data
-     * @param jsonObject
-     * @return
      */
     @PostMapping("/importdata")
 	public ResponseEntity<Integer> importData(@RequestBody DashboardBuilderData dashboardBuilderData) {
@@ -35,15 +33,13 @@ public class DashboardBuilderController {
             log.debug("Dashboard data imported successfully");
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            log.debug("Dashboard data failed to import successfully");
+            log.warn("Dashboard data failed to import successfully");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     /**
      * export method for dashboard data
-     * @param jsonObject
-     * @return
      */
     @GetMapping("/exportdata")
 	public ResponseEntity<String> exportData(@RequestParam(name = "dashboards") String dashboards) {

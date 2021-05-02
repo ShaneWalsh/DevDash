@@ -1,11 +1,11 @@
-package dev.dash.service.util.parsedQueryModel;
+package dev.dash.execute.util.parsedQueryModel;
 
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import dev.dash.execute.util.queryParts.LogicBlock;
 import dev.dash.model.elements.ElementData;
-import dev.dash.service.util.queryParts.LogicBlock;
 
 public interface QueryModelBlock {
     

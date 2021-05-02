@@ -1,4 +1,4 @@
-package dev.dash.service.util.parsedQueryModel;
+package dev.dash.execute.util.parsedQueryModel;
 
 import java.util.ArrayList;
 import java.util.List;

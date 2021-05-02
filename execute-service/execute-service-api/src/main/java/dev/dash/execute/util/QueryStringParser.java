@@ -1,4 +1,4 @@
-package dev.dash.service.util;
+package dev.dash.execute.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Map;
 
 import dev.dash.enums.QueryTagEnum;
+import dev.dash.execute.util.parsedQueryModel.OptionalQueryModelBlock;
+import dev.dash.execute.util.parsedQueryModel.ParsedQueryModel;
+import dev.dash.execute.util.parsedQueryModel.RepeatableQueryModelBlock;
+import dev.dash.execute.util.parsedQueryModel.StringQueryModelBlock;
+import dev.dash.execute.util.queryParts.LogicBlock;
+import dev.dash.execute.util.queryParts.Tag;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.elements.ElementData;
-import dev.dash.service.util.parsedQueryModel.OptionalQueryModelBlock;
-import dev.dash.service.util.parsedQueryModel.ParsedQueryModel;
-import dev.dash.service.util.parsedQueryModel.RepeatableQueryModelBlock;
-import dev.dash.service.util.parsedQueryModel.StringQueryModelBlock;
-import dev.dash.service.util.queryParts.LogicBlock;
-import dev.dash.service.util.queryParts.Tag;
 
 public class QueryStringParser {
     

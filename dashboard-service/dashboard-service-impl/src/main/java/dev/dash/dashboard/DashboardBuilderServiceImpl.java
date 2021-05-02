@@ -114,6 +114,8 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
         if ( StringUtil.isVaildString( dashboardDTO.getSecurityRole() ) && schemaConfigRepository.existsByCode( dashboardDTO.getSecurityRole() ) ) {
             SecurityRole securityRole = securityRoleRepository.findByCode(dashboardDTO.getSecurityRole());
             dashboardConfig.setSecurityRole(securityRole);
+        } else {
+            dashboardConfig.setSecurityRole(null);
         }
         dashboardConfigRepository.saveAndFlush(dashboardConfig);
     }
@@ -146,6 +148,8 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
             if ( StringUtil.isVaildString( tabDTO.getSecurityRole() ) && schemaConfigRepository.existsByCode( tabDTO.getSecurityRole() ) ) {
                 SecurityRole securityRole = securityRoleRepository.findByCode(tabDTO.getSecurityRole());
                 tabConfig.setSecurityRole(securityRole);
+            } else {
+                tabConfig.setSecurityRole(null);
             }
 
             tabConfigRepository.saveAndFlush(tabConfig);
@@ -186,7 +190,10 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
             if ( StringUtil.isVaildString( panelDTO.getSecurityRole() ) && schemaConfigRepository.existsByCode( panelDTO.getSecurityRole() ) ) {
                 SecurityRole securityRole = securityRoleRepository.findByCode(panelDTO.getSecurityRole());
                 panelConfig.setSecurityRole(securityRole);
+            } else {
+                panelConfig.setSecurityRole(null);
             }
+
             panelConfigRepository.saveAndFlush( panelConfig );
             
         }

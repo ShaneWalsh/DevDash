@@ -8,11 +8,12 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
+import dev.dash.execute.util.QueryStringParser;
+import dev.dash.execute.util.parsedQueryModel.OptionalQueryModelBlock;
+import dev.dash.execute.util.parsedQueryModel.ParsedQueryModel;
+import dev.dash.execute.util.parsedQueryModel.QueryModelBlock;
+import dev.dash.execute.util.parsedQueryModel.StringQueryModelBlock;
 import dev.dash.model.elements.ElementData;
-import dev.dash.service.util.parsedQueryModel.OptionalQueryModelBlock;
-import dev.dash.service.util.parsedQueryModel.ParsedQueryModel;
-import dev.dash.service.util.parsedQueryModel.QueryModelBlock;
-import dev.dash.service.util.parsedQueryModel.StringQueryModelBlock;
 
 public class QueryStringParserTest {
 

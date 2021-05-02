@@ -71,13 +71,13 @@ public class ConnectionConfig {
         this.name = name;
     }
 
-    public ConnectionConfig(String code, String name, String language, String url, String userame, String password,
+    public ConnectionConfig(String code, String name, String language, String url, String username, String password,
             SchemaConfig schemaConfig) {
         this.code = code;
         this.name = name;
         this.language = language;
         this.url = url;
-        this.username = userame;
+        this.username = username;
         this.password = password;
         this.schemaConfig = schemaConfig;
     }

@@ -1,4 +1,4 @@
-package dev.dash.service.util.queryParts;
+package dev.dash.execute.util.queryParts;
 
 import lombok.Data;
 

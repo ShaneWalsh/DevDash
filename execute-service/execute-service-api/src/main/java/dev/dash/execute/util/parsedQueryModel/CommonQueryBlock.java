@@ -1,4 +1,4 @@
-package dev.dash.service.util.parsedQueryModel;
+package dev.dash.execute.util.parsedQueryModel;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import dev.dash.enums.CommonQueryTagEnum;
-import dev.dash.service.util.queryParts.LogicBlock;
+import dev.dash.execute.util.queryParts.LogicBlock;
 import lombok.Data;
 
 @Data

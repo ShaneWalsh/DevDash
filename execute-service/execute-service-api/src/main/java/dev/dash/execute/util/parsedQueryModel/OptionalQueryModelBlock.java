@@ -1,9 +1,9 @@
-package dev.dash.service.util.parsedQueryModel;
+package dev.dash.execute.util.parsedQueryModel;
 
 import java.util.Map;
 
+import dev.dash.execute.util.queryParts.LogicBlock;
 import dev.dash.model.elements.ElementData;
-import dev.dash.service.util.queryParts.LogicBlock;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 

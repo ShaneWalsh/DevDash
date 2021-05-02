@@ -1,4 +1,4 @@
-package dev.dash.controller;
+package dev.dash.execute.controller;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.dash.execute.QueryExecutorService;
 import dev.dash.model.body.QueryExecution;
-import dev.dash.service.QueryExecutorService;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -26,7 +26,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PanelDTO {
-    private Long id;
     private String code; 
     private String name;
     private Integer gridRow;
@@ -53,7 +52,6 @@ class PanelDTODeserializer extends StdDeserializer<PanelDTO> {
       throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
         
-        Long id = node.has("id") ? node.get("id").asLong(): null;
         String code = node.get("code").asText();
         String name = node.get("name").asText();
         Integer gridRow = node.has("gridRow") ? node.get("gridRow").asInt() : 0;
@@ -63,7 +61,7 @@ class PanelDTODeserializer extends StdDeserializer<PanelDTO> {
         String tabConfig = node.has("tabConfig") ? node.get("tabConfig").asText(): null;
         String securityRole = node.has("securityRole") ? node.get("securityRole").asText(): null;
 
-        return new PanelDTO(id, code, name, gridRow, gridCol, elements, tabConfig, securityRole);
+        return new PanelDTO(code, name, gridRow, gridCol, elements, tabConfig, securityRole);
     }
 }
 

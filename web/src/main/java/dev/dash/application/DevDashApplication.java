@@ -20,7 +20,7 @@ import dev.dash.dao.PanelConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.dao.SchemaConfigRepository;
 import dev.dash.dao.TabConfigRepository;
-import dev.dash.service.QueryExecutorService;
+import dev.dash.execute.QueryExecutorService;
 import dev.dash.setup.DefaultDataService;
 
 import org.json.JSONArray;
