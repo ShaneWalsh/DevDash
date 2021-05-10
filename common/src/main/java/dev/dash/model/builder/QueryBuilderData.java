@@ -2,6 +2,7 @@ package dev.dash.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +32,13 @@ public class QueryBuilderData {
         if(connections == null) connections = new ArrayList<>();
         connections.add(connectionDTO);
         return this;
+    }
+
+    public String getContentsList() {
+        return String.format( "Schemas: %s Queries: %s Connections: %s", 
+            schemas.stream().map(SchemaDTO::getCode).collect(Collectors.joining(", ")),
+            queries.stream().map(QueryDTO::getCode).collect(Collectors.joining(", ")),
+            connections.stream().map(ConnectionDTO::getCode).collect(Collectors.joining(", "))
+        );
     }
 }

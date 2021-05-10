@@ -1,5 +1,9 @@
 package dev.dash.execute;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,7 @@ import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.dao.SchemaConfigRepository;
 import dev.dash.dao.SecurityRoleRepository;
+import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
@@ -18,6 +23,7 @@ import dev.dash.model.builder.ConnectionDTO;
 import dev.dash.model.builder.QueryBuilderData;
 import dev.dash.model.builder.QueryDTO;
 import dev.dash.model.builder.SchemaDTO;
+import dev.dash.security.AuditLogicService;
 import dev.dash.util.JsonUtil;
 import dev.dash.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -38,28 +44,46 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
 
     @Autowired
     SecurityRoleRepository securityRoleRepository;
+
+    @Autowired
+    AuditLogicService auditLogicService;
     
     @Override
     public boolean importConfig(QueryBuilderData queryBuilderData) {
-        //TODO _SW add auditing 
-        //TODO _SW add security
+        auditLogicService.auditEntityEvent(queryBuilderData, AuditEventTypeEnum.ImportConfig);
+        log.info("Import of Query Schema started: {}", queryBuilderData.getContentsList());
+        List<String> successSchemaCode = new ArrayList<String>();
+        List<String> successConnectionCode = new ArrayList<String>();
+        List<String> successQueryCode = new ArrayList<String>();
         for(SchemaDTO schemaDTO: queryBuilderData.getSchemas()){
-            importSchema(schemaDTO);
+            logImport( importSchema(schemaDTO), "Schema", successSchemaCode, schemaDTO.getCode() );
         }
         for(ConnectionDTO connectionDTO: queryBuilderData.getConnections()){
-            importConnection(connectionDTO);
+            logImport( importConnection(connectionDTO), "Connection", successConnectionCode, connectionDTO.getCode() );
         }
         for(QueryDTO queryDTO: queryBuilderData.getQueries()){
-            importQuery(queryDTO);
+            logImport( importQuery(queryDTO), "Query", successQueryCode, queryDTO.getCode() );
         }
-        log.info("Imported Schema Data Successfully");
+        log.info("Import of Schema Success Results: {}", String.format( "Schema: %s Connection: %s Query: %s", 
+            successSchemaCode.stream().collect(Collectors.joining(", ")),
+            successConnectionCode.stream().collect(Collectors.joining(", ")),
+            successQueryCode.stream().collect(Collectors.joining(", ")))
+        );
         return true;
+    }
+
+    private void logImport(boolean importSuccess, String importEntity, List<String> successCodes, String entityCode) {
+        if ( importSuccess ) {
+            successCodes.add(entityCode);
+        } else {
+            log.warn("Failed to import {}: {}", importEntity, entityCode);
+        }
     }
 
     @Override
     public String exportConfig(String[] schemaConfigs) {
-        //TODO _SW add auditing 
-        //TODO _SW add security
+        auditLogicService.auditEntityEvent(schemaConfigs, AuditEventTypeEnum.ExportConfig);
+        log.info("Export of schemas started: {}", String.join(", ",schemaConfigs));
         QueryBuilderData queryBuilderData = new QueryBuilderData();
         for ( String schemaCode : schemaConfigs ) {
             if( StringUtil.isVaildString(schemaCode) && schemaConfigRepository.existsByCode(schemaCode) ){
@@ -73,10 +97,11 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 }
             }
         }
+        log.debug( "Exported Schema Config: {} ", queryBuilderData.getContentsList() );
         return JsonUtil.toJSON(queryBuilderData);
     }
     
-    private void importSchema (SchemaDTO schemaDTO) {
+    private boolean importSchema (SchemaDTO schemaDTO) {
         if ( StringUtil.isVaildString( schemaDTO.getCode() ) ) {
             SchemaConfig schemaConfig = null;
             if ( schemaConfigRepository.existsByCode(schemaDTO.getCode()) ) { 
@@ -96,18 +121,20 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 schemaConfig.setSecurityRole(null);
             }
 
-            schemaConfigRepository.saveAndFlush(schemaConfig);
+            SchemaConfig importSchema = schemaConfigRepository.saveAndFlush(schemaConfig);
+            return importSchema != null;
         } else {
             log.warn("Failed to import schema. Missing mandatory schema code");
+            return false;
         }
     }
 
-    private void importConnection ( ConnectionDTO connectionDTO ) {
+    private boolean importConnection ( ConnectionDTO connectionDTO ) {
         if ( StringUtil.isVaildString( connectionDTO.getSchemaCode() ) && schemaConfigRepository.existsByCode( connectionDTO.getSchemaCode() ) ) {
             SchemaConfig schemaConfig = schemaConfigRepository.findByCode(connectionDTO.getSchemaCode());
             
             ConnectionConfig connectionConfig = null;
-            if( !StringUtil.isVaildString( connectionDTO.getCode() ) ) { return; }
+            if( !StringUtil.isVaildString( connectionDTO.getCode() ) ) { return false; }
             if ( connectionConfigRepository.existsByCode(connectionDTO.getCode()) ) { 
                 connectionConfig = connectionConfigRepository.findByCode(connectionDTO.getCode());
 
@@ -135,19 +162,21 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 connectionConfig.setSecurityRole(null);
             }
 
-            connectionConfigRepository.saveAndFlush(connectionConfig);
+            ConnectionConfig importConnection = connectionConfigRepository.saveAndFlush(connectionConfig);
+            return importConnection != null;
         } else {
             log.warn("Failed to import connection. Missing mandatory schema");
+            return false;
         }
     }
 
-    private void importQuery( QueryDTO queryDTO ) {
+    private boolean importQuery( QueryDTO queryDTO ) {
         if ( StringUtil.isVaildString( queryDTO.getSchemaCode() ) && schemaConfigRepository.existsByCode( queryDTO.getSchemaCode() ) ) {
             SchemaConfig schemaConfig = schemaConfigRepository.findByCode(queryDTO.getSchemaCode());
             DdlTypeEnum queryType = StringUtil.isVaildString( queryDTO.getDdlType() ) ? DdlTypeEnum.valueOf(queryDTO.getDdlType()) : DdlTypeEnum.Select;
 
             QueryConfig queryConfig = null;
-            if( !StringUtil.isVaildString( queryDTO.getCode() ) ) { return; }
+            if( !StringUtil.isVaildString( queryDTO.getCode() ) ) { return false; }
             if ( queryConfigRepository.existsByCode(queryDTO.getCode()) ) { 
                 queryConfig = queryConfigRepository.findByCode(queryDTO.getCode());
                 queryDTO.setDescription(queryDTO.getDescription());
@@ -171,9 +200,11 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 queryConfig.setSecurityRole(null);
             }
 
-            queryConfigRepository.saveAndFlush(queryConfig);
+            QueryConfig importQuery = queryConfigRepository.saveAndFlush(queryConfig);
+            return importQuery != null;
         } else {
             log.warn("Failed to import query. Missing mandatory schema");
+            return false;
         }
     }
 
@@ -188,6 +219,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
     private ConnectionDTO convert(ConnectionConfig connectionConfig) {
         ConnectionDTO connectionDTO= new ConnectionDTO();
         connectionDTO.setCode( connectionConfig.getCode() );
+        connectionDTO.setName( connectionConfig.getName() );
         connectionDTO.setConnectionType( connectionConfig.getConnectionType() );
         connectionDTO.setLanguage( connectionConfig.getLanguage() );
         connectionDTO.setDriverType( connectionConfig.getDriverType() );

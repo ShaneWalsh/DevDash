@@ -6,6 +6,7 @@ public interface DashboardBuilderService {
 
     /**
      * Import dashboard configs, will update any existing elements. Missing references will be ignored.
+     * Secured by user type role Configurator
      * @param dashboardBuilderData
      * @return
      */
@@ -13,6 +14,7 @@ public interface DashboardBuilderService {
 
     /**
      * Export the configs passed in the array
+     * Secured by user type role Configurator
      * @param dashboardBuilderData
      * @return
      */

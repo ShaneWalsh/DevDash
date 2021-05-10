@@ -1,7 +1,10 @@
 package dev.dash.dashboard;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -13,6 +16,7 @@ import dev.dash.dao.PanelConfigRepository;
 import dev.dash.dao.SchemaConfigRepository;
 import dev.dash.dao.SecurityRoleRepository;
 import dev.dash.dao.TabConfigRepository;
+import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.model.DashboardConfig;
 import dev.dash.model.PanelConfig;
 import dev.dash.model.SchemaConfig;
@@ -22,6 +26,7 @@ import dev.dash.model.builder.DashboardBuilderData;
 import dev.dash.model.builder.DashboardDTO;
 import dev.dash.model.builder.PanelDTO;
 import dev.dash.model.builder.TabDTO;
+import dev.dash.security.AuditLogicService;
 import dev.dash.util.JsonUtil;
 import dev.dash.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -46,26 +51,37 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
     @Autowired
     SecurityRoleRepository securityRoleRepository;
 
+    @Autowired
+    AuditLogicService auditLogicService;
+
     @Override
     public boolean importConfig( DashboardBuilderData dashboardBuilderData ) {
-        //TODO _SW add auditing 
-        //TODO _SW add security 
+        auditLogicService.auditEntityEvent(dashboardBuilderData, AuditEventTypeEnum.ImportConfig);
+        log.info("Import of configs started: {}", dashboardBuilderData.getContentsList());
+        List<String> successDashboardCode = new ArrayList<String>();
+        List<String> successTabCode = new ArrayList<String>();
+        List<String> successPanelCode = new ArrayList<String>();
         for(DashboardDTO dashboardDTO: dashboardBuilderData.getDashboardConfigs()){
-            importDashboard(dashboardDTO);
+            logImport( importDashboard(dashboardDTO), "Dashboard", successDashboardCode, dashboardDTO.getCode() );
         }
         for ( TabDTO tabDTO : dashboardBuilderData.getTabConfigs() ) {
-            importTab(tabDTO);
+            logImport( importTab(tabDTO), "Tab", successTabCode, tabDTO.getCode() );
         }
         for ( PanelDTO panelDTO: dashboardBuilderData.getPanelConfigs() ) {
-            importPanel(panelDTO);
+            logImport( importPanel(panelDTO), "Panel", successPanelCode, panelDTO.getCode() );
         }
+        log.info("Import of configs Success Results: {}", String.format( "Dashboards: %s Tabs: %s Panels: %s", 
+            successDashboardCode.stream().collect(Collectors.joining(", ")),
+            successTabCode.stream().collect(Collectors.joining(", ")),
+            successPanelCode.stream().collect(Collectors.joining(", ")))
+        );
         return true;
     }
 
     @Override
     public String exportConfig( String[] dashboardConfigs ) {
-        //TODO _SW add auditing 
-        //TODO _SW add security
+        auditLogicService.auditEntityEvent(dashboardConfigs, AuditEventTypeEnum.ExportConfig);
+        log.info("Export of configs started: {}", String.join(", ",dashboardConfigs));
         DashboardBuilderData dashboardBuilderData = new DashboardBuilderData();
         for ( String dashboardCode : dashboardConfigs ) {
             if( StringUtil.isVaildString(dashboardCode) && dashboardConfigRepository.existsByCode(dashboardCode) ){
@@ -79,16 +95,25 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
                 }
             }
         }
+        log.debug( "Exported Dashboard Config: {} ", dashboardBuilderData.getContentsList() );
         return JsonUtil.toJSON(dashboardBuilderData);
+    }
+
+    private void logImport(boolean importSuccess, String importEntity, List<String> successCodes, String entityCode) {
+        if ( importSuccess ) {
+            successCodes.add(entityCode);
+        } else {
+            log.warn("Failed to import {}: {}", importEntity, entityCode);
+        }
     }
 
     /**
      * does it already exist? update it
      * else create it.
      */
-    private void importDashboard ( DashboardDTO dashboardDTO ) {
+    private boolean importDashboard ( DashboardDTO dashboardDTO ) {
         DashboardConfig dashboardConfig = null;
-        if( !StringUtil.isVaildString( dashboardDTO.getCode() ) ) { return; }
+        if( !StringUtil.isVaildString( dashboardDTO.getCode() ) ) { return false; }
         if( dashboardConfigRepository.existsByCode(dashboardDTO.getCode()) ) { 
             dashboardConfig = dashboardConfigRepository.findByCode(dashboardDTO.getCode());
             dashboardConfig.setName(dashboardDTO.getName());
@@ -117,20 +142,21 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
         } else {
             dashboardConfig.setSecurityRole(null);
         }
-        dashboardConfigRepository.saveAndFlush(dashboardConfig);
+        DashboardConfig dashboardConfigInstance = dashboardConfigRepository.saveAndFlush(dashboardConfig);
+        return dashboardConfigInstance != null;
     }
 
     /**
      * does it already exist? update it
      * else create it.
      */
-    private void importTab(TabDTO tabDTO) {
+    private boolean importTab(TabDTO tabDTO) {
         String dashboardConfigCode = tabDTO.getDashboardConfig();
         if ( StringUtil.isVaildString(dashboardConfigCode) && dashboardConfigRepository.existsByCode( dashboardConfigCode ) ) {
             DashboardConfig dashboardConfig = dashboardConfigRepository.findByCode(dashboardConfigCode);
             
             TabConfig tabConfig = null;
-            if( !StringUtil.isVaildString( tabDTO.getCode() ) ) { return; }
+            if( !StringUtil.isVaildString( tabDTO.getCode() ) ) { return false; }
             if ( tabConfigRepository.existsByCode(tabDTO.getCode()) ) { 
                 tabConfig = tabConfigRepository.findByCode(tabDTO.getCode());
                 tabConfig.setName(tabDTO.getName());
@@ -152,15 +178,17 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
                 tabConfig.setSecurityRole(null);
             }
 
-            tabConfigRepository.saveAndFlush(tabConfig);
+            TabConfig tabConfigInstance = tabConfigRepository.saveAndFlush(tabConfig);
+            return tabConfigInstance != null;
         }
+        return false;
     }
 
     /**
      * does it already exist? update it
      * else create it.
      */
-    private void importPanel( PanelDTO panelDTO ) {
+    private boolean importPanel( PanelDTO panelDTO ) {
 
         // tab needs to exist
         String tabConfigCode = panelDTO.getTabConfig();
@@ -168,7 +196,7 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
             TabConfig tabConfig = tabConfigRepository.findByCode(tabConfigCode);
 
             PanelConfig panelConfig = null;
-            if ( !StringUtil.isVaildString(panelDTO.getCode()) ) { return;}
+            if ( !StringUtil.isVaildString(panelDTO.getCode()) ) { return false;}
             if ( panelConfigRepository.existsByCode(panelDTO.getCode()) ) {
                 panelConfig = panelConfigRepository.findByCode( panelDTO.getCode() );
                 panelConfig.setName(panelDTO.getName());
@@ -194,9 +222,10 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
                 panelConfig.setSecurityRole(null);
             }
 
-            panelConfigRepository.saveAndFlush( panelConfig );
-            
+            PanelConfig panelConfigInstance = panelConfigRepository.saveAndFlush( panelConfig );
+            return panelConfigInstance != null;
         }
+        return false;
     }
 
     private DashboardDTO convert(DashboardConfig dashboardConfig) {

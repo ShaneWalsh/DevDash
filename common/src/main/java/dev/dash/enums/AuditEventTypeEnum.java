@@ -14,7 +14,9 @@ public enum AuditEventTypeEnum {
     GetDashboardUserLackingRole,
 
     LoginSuccess,
-    LoginFailed;
+    LoginFailed,
 
+    ExportConfig,
+    ImportConfig
     
 }
