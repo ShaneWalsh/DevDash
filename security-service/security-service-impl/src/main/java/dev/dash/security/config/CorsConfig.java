@@ -39,7 +39,7 @@ public class CorsConfig {
         config.addAllowedHeader("Access-Control-Request-Headers");
         config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowedOrigins(Arrays.asList("*"));
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
 
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);

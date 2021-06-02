@@ -2,6 +2,7 @@ package dev.dash.security;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,8 +39,8 @@ public class AdminLogicServiceImpl implements AdminLogicService {
                 null,
                 securityUser.getUserType(), 
                 securityUser.isDisabledUser(), 
-                securityUser.getSecurityRolesSet() == null ? Collections.emptySet() : 
-                    securityUser.getSecurityRolesSet().stream().map(role -> role.getCode()).collect(Collectors.toSet())
+                securityUser.getSecurityRolesSet() == null ? Collections.emptyList() : 
+                    securityUser.getSecurityRolesSet().stream().map(role -> role.getCode()).collect(Collectors.toList())
             )
         ).collect(Collectors.toList());
         return dtos;
@@ -53,10 +54,49 @@ public class AdminLogicServiceImpl implements AdminLogicService {
             UserTypeEnum.valueOf(addSecurityUser.getUserType()).toString() );
         Set<SecurityRole> rolesSet = (addSecurityUser.getSecurityRolesSet() == null || addSecurityUser.getSecurityRolesSet().size() == 0) ? 
                 Collections.emptySet() :
-                addSecurityUser.getSecurityRolesSet().stream().map(roleCode -> securityRoleRepository.findByCode(roleCode)).collect(Collectors.toSet());
+                addSecurityUser.getSecurityRolesSet().stream().map(roleCode -> securityRoleRepository.findByCode(roleCode)).filter(value -> value != null).collect(Collectors.toSet());
         securityUser.setSecurityRolesSet( rolesSet );
         SecurityUser saveAndFlushedUser = this.securityUserRepository.saveAndFlush(securityUser);
         return saveAndFlushedUser.getId();
+    }
+
+    @Override
+    public boolean updateSecurityUser(SecurityUserDTO updateSecurityUser) {
+        SecurityUser securityUser = securityUserRepository.findByUsername(updateSecurityUser.getUsername());
+        if (securityUser != null){
+            securityUser.setUsername(updateSecurityUser.getUsername());
+            securityUser.setUserType(updateSecurityUser.getUserType());
+            securityUser.setDisabledUser(updateSecurityUser.isDisabledUser());
+            Set<SecurityRole> rolesSet = (updateSecurityUser.getSecurityRolesSet() == null || updateSecurityUser.getSecurityRolesSet().size() == 0) ? 
+                Collections.emptySet() :
+                updateSecurityUser.getSecurityRolesSet().stream().map(roleCode -> securityRoleRepository.findByCode(roleCode)).filter(value -> value != null).collect(Collectors.toSet());
+            securityUser.setSecurityRolesSet(rolesSet);
+            this.securityUserRepository.saveAndFlush(securityUser);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteSecurityUser(Long id) {
+        Optional<SecurityUser> securityUser = securityUserRepository.findById(id);
+        if (securityUser != null && securityUser.isPresent()){
+            this.securityUserRepository.delete(securityUser.get());
+            this.securityUserRepository.flush();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean resetSecurityUserPassword( String username, String password ) {
+        SecurityUser securityUser = securityUserRepository.findByUsername(username);
+        if (securityUser != null){
+            securityUser.setPassword(passwordEncoder.encode(password));
+            this.securityUserRepository.saveAndFlush(securityUser);
+            return true;
+        }
+        return false;
     }
 
 }

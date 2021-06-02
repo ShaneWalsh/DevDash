@@ -1,6 +1,6 @@
 package dev.dash.model.dto.admin;
 
-import java.util.Set;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,5 +13,5 @@ public class SecurityUserDTO {
     String password;
     String userType;
     boolean disabledUser;
-    Set<String> securityRolesSet;
+    List<String> securityRolesSet;
 }

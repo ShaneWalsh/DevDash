@@ -8,6 +8,11 @@ public interface AdminLogicService {
 
     List<SecurityUserDTO> getSecurityUserList();
 
-    Long addSecurityUser(SecurityUserDTO addSecurityUser);
+    Long addSecurityUser( SecurityUserDTO addSecurityUser );
     
+    boolean updateSecurityUser( SecurityUserDTO updateSecurityUser );
+
+    boolean deleteSecurityUser( Long id );
+
+    boolean resetSecurityUserPassword( String username, String password );
 }

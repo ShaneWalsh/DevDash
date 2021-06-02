@@ -43,7 +43,7 @@ public class SecurityUser implements Auditable{
     @Column(name="disabledUser")
     private boolean disabledUser;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
     name = "securityUser_to_securityRole", 
     joinColumns = @JoinColumn(name = "securityUser_id"), 
