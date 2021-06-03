@@ -62,8 +62,9 @@ public class AdminLogicServiceImpl implements AdminLogicService {
 
     @Override
     public boolean updateSecurityUser(SecurityUserDTO updateSecurityUser) {
-        SecurityUser securityUser = securityUserRepository.findByUsername(updateSecurityUser.getUsername());
-        if (securityUser != null){
+        Optional<SecurityUser> securityUserOpt = securityUserRepository.findById(updateSecurityUser.getId());
+        if (securityUserOpt != null && securityUserOpt.isPresent()){
+            SecurityUser securityUser = securityUserOpt.get();
             securityUser.setUsername(updateSecurityUser.getUsername());
             securityUser.setUserType(updateSecurityUser.getUserType());
             securityUser.setDisabledUser(updateSecurityUser.isDisabledUser());

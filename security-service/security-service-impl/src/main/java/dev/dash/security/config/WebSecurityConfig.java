@@ -62,6 +62,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 					// only admins and configs and can import/export
 					.antMatchers("/**/importdata").hasAnyRole( UserTypeEnum.Admin.getRole(), UserTypeEnum.Configurator.getRole() ) 
 					.antMatchers("/**/exportdata").hasAnyRole( UserTypeEnum.Admin.getRole(), UserTypeEnum.Configurator.getRole() )
+					// only admin can access the admin apis
+					.antMatchers("/admin/**").hasAnyRole( UserTypeEnum.Admin.getRole())
 					.anyRequest().authenticated().and() 			  // any other request must be authenticated 
 					.exceptionHandling().and().sessionManagement()
 				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
