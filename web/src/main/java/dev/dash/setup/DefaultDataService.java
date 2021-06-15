@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import dev.dash.dao.*;
+import dev.dash.enums.AdminDefaultRolesEnum;
 import dev.dash.enums.DatabaseLanguageEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.enums.UserTypeEnum;
@@ -23,11 +24,11 @@ import dev.dash.model.*;
 @Service
 public class DefaultDataService {
     
-    private static final String DD_CONFIGURATOR_DASHBOARD = "DD_Configurator_Dashboard";
+    private static final String DD_CONFIGURATOR_DASHBOARD = AdminDefaultRolesEnum.DD_CONFIGURATOR_DASHBOARD.getSecurityRoleCode();
 
-    private static final String DD_CONFIGURATOR_QUERY = "DD_Configurator_Query";
+    private static final String DD_CONFIGURATOR_QUERY = AdminDefaultRolesEnum.DD_CONFIGURATOR_QUERY.getSecurityRoleCode();
 
-    private static final String DD_CONFIGURATOR_PARENT = "DD_Configurator_Parent";
+    private static final String DD_CONFIGURATOR_PARENT = AdminDefaultRolesEnum.DD_CONFIGURATOR_PARENT.getSecurityRoleCode();
 
     @Autowired
     private SecurityRoleRepository securityRoleRepository;
