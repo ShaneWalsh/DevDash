@@ -79,7 +79,7 @@ public class AdminController {
         return new ResponseEntity<>(findAll, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.POST)
+    @RequestMapping(value = "/role", method = RequestMethod.POST)
 	public ResponseEntity<Long> addSecurityRole(@RequestBody SecurityRoleDTO addSecurityRole) throws Exception {
         Long newUserId = adminLogicService.addSecurityRole(addSecurityRole);
         if(newUserId == null){
@@ -89,7 +89,7 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "/user", method = RequestMethod.PATCH)
+    @RequestMapping(value = "/role", method = RequestMethod.PATCH)
 	public ResponseEntity<Boolean> updateSecurityRole(@RequestBody SecurityRoleDTO addSecurityRole) throws Exception {
         boolean success = adminLogicService.updateSecurityRole(addSecurityRole);
         if( !success ){
@@ -99,7 +99,7 @@ public class AdminController {
         }
     }
 
-    @RequestMapping(value = "/user/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/role/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Boolean> deleteSecurityRole(@PathVariable Long id) throws Exception {
         boolean success = adminLogicService.deleteSecurityRole(id);
         if ( !success ) {

@@ -1,5 +1,6 @@
 package dev.dash.security;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -110,8 +111,8 @@ public class AdminLogicServiceImpl implements AdminLogicService {
             role.getId(),
             role.getCode(),
             role.getDescription(),
-            role.getParentSecurityRole().getCode(),
-            role.getChildren().stream().map(child -> child.getCode()).collect(Collectors.toList())
+            (role.getParentSecurityRole() != null)?role.getParentSecurityRole().getCode():null,
+            (role.getChildren() != null && role.getChildren().size() > 0)?role.getChildren().stream().map(child -> child.getCode()).collect(Collectors.toList()):null
         )).collect(Collectors.toList());
         return roleDTOs;
     }
@@ -133,7 +134,11 @@ public class AdminLogicServiceImpl implements AdminLogicService {
         // }
         SecurityRole saveAndFlushedRole = this.securityRoleRepository.save(securityRole);
         // update the parent side of the relationship
-        parentSecRole.getChildren().add(securityRole);
+        if(parentSecRole.getChildren() != null) {
+            parentSecRole.getChildren().add(securityRole);
+        } else {
+            parentSecRole.setChildren(new HashSet<>(Arrays.asList(securityRole)));
+        }
         this.securityRoleRepository.saveAndFlush(parentSecRole);
         return saveAndFlushedRole.getId();
     }
