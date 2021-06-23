@@ -17,8 +17,8 @@ public interface AuditLogicService {
 
    /**
      * Create an Audit entry for an event and a Pojo which will be converted to JSON
+     * @param pojo the data for the event
      * @param auditEntityChange the change
-     * @param jsonData the data for the event
      */
     public void auditEntityEvent( Object pojo, AuditEventTypeEnum auditEntityChange);
 

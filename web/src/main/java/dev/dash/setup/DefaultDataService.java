@@ -16,14 +16,18 @@ import dev.dash.enums.DatabaseLanguageEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.enums.UserTypeEnum;
 import dev.dash.model.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Initialises the application db with all of the default configs for the dashboard building.
  */
+@Slf4j
 @Transactional
 @Service
 public class DefaultDataService {
     
+    private static final String DD_DEV_DASH = "DD_DevDash";
+
     private static final String DD_CONFIGURATOR_DASHBOARD = AdminDefaultRolesEnum.DD_CONFIGURATOR_DASHBOARD.getSecurityRoleCode();
 
     private static final String DD_CONFIGURATOR_QUERY = AdminDefaultRolesEnum.DD_CONFIGURATOR_QUERY.getSecurityRoleCode();
@@ -61,50 +65,56 @@ public class DefaultDataService {
     private String defaultAdminPassword;
 
     public void setupAllData(){
+        // check if the db already exists, if it does, do nothing.
         this.setupSecurityAndRoles();
         this.setupDefaultScreens();
     }
 
     public void setupSecurityAndRoles() {
-        SecurityRole securityRoleParent = new SecurityRole(DD_CONFIGURATOR_PARENT,"Parent Role to access all DD configs, typically an Admin.");
-        this.securityRoleRepository.saveAndFlush(securityRoleParent);
+        SecurityRole existingRole = this.securityRoleRepository.findByCode(DD_CONFIGURATOR_PARENT);
+        if(existingRole == null) {
+            SecurityRole securityRoleParent = new SecurityRole(DD_CONFIGURATOR_PARENT,"Parent Role to access all DD configs, typically an Admin.");
+            this.securityRoleRepository.saveAndFlush(securityRoleParent);
 
-        SecurityRole securityRoleDashboard = new SecurityRole(DD_CONFIGURATOR_DASHBOARD,"Role to crud DevDash Dashboards, typically a developer.",securityRoleParent);
-        this.securityRoleRepository.saveAndFlush(securityRoleDashboard);
+            SecurityRole securityRoleDashboard = new SecurityRole(DD_CONFIGURATOR_DASHBOARD,"Role to crud DevDash Dashboards, typically a developer.",securityRoleParent);
+            this.securityRoleRepository.saveAndFlush(securityRoleDashboard);
 
-        SecurityRole securityRoleQuery = new SecurityRole(DD_CONFIGURATOR_QUERY,"Role to crud DevDash Queries, typically a developer.", securityRoleParent);
-        this.securityRoleRepository.saveAndFlush(securityRoleQuery);
+            SecurityRole securityRoleQuery = new SecurityRole(DD_CONFIGURATOR_QUERY,"Role to crud DevDash Queries, typically a developer.", securityRoleParent);
+            this.securityRoleRepository.saveAndFlush(securityRoleQuery);
 
-        SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
-        securityUser.setSecurityRolesSet( new HashSet<>( Arrays.asList( securityRoleParent ) ) );
-        //securityRoleParent.setSecurityUsersSet(new HashSet(Arrays.asList(securityUser)));
-        this.securityUserRepository.saveAndFlush(securityUser);
+            SecurityUser securityUser = new SecurityUser( "Admin", passwordEncoder.encode(defaultAdminPassword), UserTypeEnum.Admin.name() );
+            securityUser.setSecurityRolesSet( new HashSet<>( Arrays.asList( securityRoleParent ) ) );
+            //securityRoleParent.setSecurityUsersSet(new HashSet(Arrays.asList(securityUser)));
+            this.securityUserRepository.saveAndFlush(securityUser);
+        } else {
+            log.info("Skipping setupSecurityAndRoles as roles already exist");
+        }
     }
 
     public void setupDefaultScreens(){
         // setup schema's
-        SchemaConfig configuratorScheme = new SchemaConfig("DD_DevDash", "DevDash DB");
-        configuratorScheme.setSecurityRole( this.securityRoleRepository.findByCode( DD_CONFIGURATOR_QUERY ) );
-        schemaConfigRepository.saveAndFlush( configuratorScheme );
-        // setup connections // todo replace with configurable variables from resources
-        ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
-            "jdbc:mysql://localhost:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", 
-            "root", "Monkey2020$", configuratorScheme );
-        connectionConfigRepository.saveAndFlush(motorConnectionConfig);
+        SchemaConfig existingConfig = schemaConfigRepository.findByCode(DD_DEV_DASH);
+        if ( existingConfig == null) {
+            SchemaConfig configuratorScheme = new SchemaConfig(DD_DEV_DASH, "DevDash DB");
+            configuratorScheme.setSecurityRole( this.securityRoleRepository.findByCode( DD_CONFIGURATOR_QUERY ) );
+            schemaConfigRepository.saveAndFlush( configuratorScheme );
+            // setup connections // todo replace with configurable variables from resources
+            ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
+                "jdbc:mysql://localhost:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", 
+                "root", "Monkey2020$", configuratorScheme );
+            connectionConfigRepository.saveAndFlush(motorConnectionConfig);
 
-        DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );
-        setupTabScreens( configuratorScheme, dashboardScreens );
-        setupPanelScreens( configuratorScheme, dashboardScreens );
+            DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );
+            setupTabScreens( configuratorScheme, dashboardScreens );
+            setupPanelScreens( configuratorScheme, dashboardScreens );
 
-        setupSchemaScreens( configuratorScheme, dashboardScreens );
-        setupConnectionScreens(configuratorScheme, dashboardScreens);
-        setupQueryScreens(configuratorScheme, dashboardScreens);
+            setupSchemaScreens( configuratorScheme, dashboardScreens );
+            setupConnectionScreens(configuratorScheme, dashboardScreens);
+            setupQueryScreens(configuratorScheme, dashboardScreens);
+        } else {
+            log.info("Skipping setupDefaultScreens as screens already exist");
+        }
     }
-
-    // todo add the config for the admin security user
-    // todo add the config for the default admin screens
-    // todo add the config for the configurator user
-    // todo add the config for the default configurator screens (query + screen builder)
 
     /**
      * Default configs for dashboards, should this not be populated by an sql file on start up? 

@@ -17,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import dev.dash.security.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "securityRole")
-public class SecurityRole {
+public class SecurityRole implements Auditable {
  
 	@Id
 	@Column(name="securityRole_id")

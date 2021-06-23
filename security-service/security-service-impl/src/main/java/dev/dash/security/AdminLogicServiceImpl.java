@@ -8,6 +8,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,12 +17,14 @@ import org.springframework.stereotype.Service;
 import dev.dash.dao.SecurityRoleRepository;
 import dev.dash.dao.SecurityUserRepository;
 import dev.dash.enums.AdminDefaultRolesEnum;
+import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.enums.UserTypeEnum;
 import dev.dash.model.SecurityRole;
 import dev.dash.model.SecurityUser;
 import dev.dash.model.dto.admin.SecurityRoleDTO;
 import dev.dash.model.dto.admin.SecurityUserDTO;
 
+@Transactional
 @Service
 public class AdminLogicServiceImpl implements AdminLogicService {
 
@@ -29,6 +33,9 @@ public class AdminLogicServiceImpl implements AdminLogicService {
     
     @Autowired
     private SecurityRoleRepository securityRoleRepository;
+
+    @Autowired
+    private AuditLogicService auditLogicService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -47,6 +54,9 @@ public class AdminLogicServiceImpl implements AdminLogicService {
                     securityUser.getSecurityRolesSet().stream().map(role -> role.getCode()).collect(Collectors.toList())
             )
         ).collect(Collectors.toList());
+
+        String ids = "getSecurityUserList:"+ dtos.stream().map(dto -> dto.getUsername()).reduce("", (a,b) -> (a.length()>0)? a+","+b : a+b);
+        auditLogicService.auditEntityEvent(ids, AuditEventTypeEnum.EntitySelect);
         return dtos;
     }
 
@@ -61,6 +71,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
                 addSecurityUser.getSecurityRolesSet().stream().map(roleCode -> securityRoleRepository.findByCode(roleCode)).filter(value -> value != null).collect(Collectors.toSet());
         securityUser.setSecurityRolesSet( rolesSet );
         SecurityUser saveAndFlushedUser = this.securityUserRepository.saveAndFlush(securityUser);
+        auditLogicService.auditEntityEvent(saveAndFlushedUser, AuditEventTypeEnum.EntityInsert, addSecurityUser);
         return saveAndFlushedUser.getId();
     }
 
@@ -69,6 +80,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
         Optional<SecurityUser> securityUserOpt = securityUserRepository.findById(updateSecurityUser.getId());
         if (securityUserOpt != null && securityUserOpt.isPresent()){
             SecurityUser securityUser = securityUserOpt.get();
+            auditLogicService.auditEntityEvent(securityUser, AuditEventTypeEnum.EntityUpdate, updateSecurityUser);
             securityUser.setUsername(updateSecurityUser.getUsername());
             securityUser.setUserType(updateSecurityUser.getUserType());
             securityUser.setDisabledUser(updateSecurityUser.isDisabledUser());
@@ -85,8 +97,10 @@ public class AdminLogicServiceImpl implements AdminLogicService {
     @Override
     public boolean deleteSecurityUser(Long id) {
         Optional<SecurityUser> securityUser = securityUserRepository.findById(id);
-        if (securityUser != null && securityUser.isPresent()){
-            this.securityUserRepository.delete(securityUser.get());
+        if (securityUser != null && securityUser.isPresent()) {
+            SecurityUser entity = securityUser.get();
+            auditLogicService.auditEntityEvent(new AuditableInstance(id,"SecurityUser"), AuditEventTypeEnum.EntityDelete);
+            this.securityUserRepository.delete(entity);
             this.securityUserRepository.flush();
             return true;
         }
@@ -95,6 +109,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
 
     @Override
     public boolean resetSecurityUserPassword( String username, String password ) {
+        auditLogicService.auditEntityEvent("resetSecurityUserPassword:"+username, AuditEventTypeEnum.EntityUpdate);
         SecurityUser securityUser = securityUserRepository.findByUsername(username);
         if (securityUser != null){
             securityUser.setPassword(passwordEncoder.encode(password));
@@ -114,6 +129,8 @@ public class AdminLogicServiceImpl implements AdminLogicService {
             (role.getParentSecurityRole() != null)?role.getParentSecurityRole().getCode():null,
             (role.getChildren() != null && role.getChildren().size() > 0)?role.getChildren().stream().map(child -> child.getCode()).collect(Collectors.toList()):null
         )).collect(Collectors.toList());
+        String ids = "getSecurityRoleList:"+ roleDTOs.stream().map(roleDto -> roleDto.getCode()).reduce("", (a,b) -> (a.length()>0)? a+","+b : a+b);
+        auditLogicService.auditEntityEvent(ids, AuditEventTypeEnum.EntitySelect);
         return roleDTOs;
     }
 
@@ -140,6 +157,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
             parentSecRole.setChildren(new HashSet<>(Arrays.asList(securityRole)));
         }
         this.securityRoleRepository.saveAndFlush(parentSecRole);
+        auditLogicService.auditEntityEvent(saveAndFlushedRole, AuditEventTypeEnum.EntityInsert, addSecurityRole);
         return saveAndFlushedRole.getId();
     }
 
@@ -148,6 +166,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
         Optional<SecurityRole> existingSecRole = securityRoleRepository.findById(updateSecurityRoleDto.getId());
         if(existingSecRole.isPresent()){
             SecurityRole role = existingSecRole.get();
+            auditLogicService.auditEntityEvent(role, AuditEventTypeEnum.EntityUpdate, updateSecurityRoleDto );
             SecurityRole parentSecRole = (updateSecurityRoleDto.getParentSecurityRole() != null)? 
                 securityRoleRepository.findByCode(updateSecurityRoleDto.getParentSecurityRole()) : 
                 ( !updateSecurityRoleDto.getCode().equalsIgnoreCase(AdminDefaultRolesEnum.DD_CONFIGURATOR_DASHBOARD.getSecurityRoleCode() ))?
@@ -189,6 +208,8 @@ public class AdminLogicServiceImpl implements AdminLogicService {
             for(SecurityUser securityUser: updatedSecurityUsers) {
                 securityUserRepository.save(securityUser);
             }
+
+            auditLogicService.auditEntityEvent(new AuditableInstance(role.getId(),"SecurityRole"), AuditEventTypeEnum.EntityDelete);
             securityRoleRepository.delete(role);
             this.securityUserRepository.flush();
             this.securityRoleRepository.flush();
@@ -205,6 +226,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
         for(SecurityRole child: securityRole.getChildren()){
             deleteChildRole(child,updatedSecurityUsers);
         }
+        auditLogicService.auditEntityEvent(new AuditableInstance(securityRole.getId(),"SecurityRole"), AuditEventTypeEnum.EntityDelete);
         securityRoleRepository.delete(securityRole);
     }
 

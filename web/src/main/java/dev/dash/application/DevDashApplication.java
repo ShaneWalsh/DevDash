@@ -1,7 +1,6 @@
 package dev.dash.application;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -64,76 +63,7 @@ public class DevDashApplication implements CommandLineRunner {
     public void run(String... args) throws Exception 
     {       
         defaultDataService.setupAllData();
-        // Optional<EmployeeEntity> emp = repository.findById(2L);
- 
-        // logger.info("Employee id 2 -> {}", emp.get());
-        //part2();
-
-        //JSONArray jsonArray = queryExecutorService.processQuery("SelectAllTutorials", "tutorialdbOne", null);
-        //System.out.println(jsonArray.toString());
     }
-
-
-    // @Bean
-	// public WebMvcConfigurer corsConfigurer() {
-	// 	return new WebMvcConfigurer() {
-	// 		@Override
-	// 		public void addCorsMappings(CorsRegistry registry) {
-	// 			registry.addMapping("*").allowedOrigins("*");
-	// 		// 	registry.addMapping("/devdash/*").allowedOrigins("http://localhost:4200");
-	// 		// 	registry.addMapping("/devdash/query/*").allowedOrigins("http://localhost:4200");
-	// 		}
-	// 	};
-    // }
-    
-
-	public void part2() throws ClassNotFoundException {
-		
-		System.out.println("-------- MySQL JDBC Connection Demo ------------");
-        try
-        {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } 
-        catch (ClassNotFoundException e) {
-            System.out.println("MySQL JDBC Driver not found !!");
-            return;
-        }
-        System.out.println("MySQL JDBC Driver Registered!");
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", "root", "Monkey2020$");
-            System.out.println("SQL Connection to database established!");
-
-            viewTable(connection,"tutorial_tbl");
-        } catch (SQLException e) {
-            System.out.println("Connection Failed! Check output console");
-            e.printStackTrace();
-            return;
-        } finally {
-            try
-            {
-                if(connection != null)
-                    connection.close();
-                System.out.println("Connection closed !!");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        //System.exit(0);
-
-		// MysqlDataSource mysqlDS = null;
-		// try {
-		// 	mysqlDS = new MysqlDataSource();
-		// 	mysqlDS.setURL("");
-		// 	//mysqlDS.setUser(props.getProperty("MYSQL_DB_USERNAME"));
-		// 	//mysqlDS.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));
-		// } catch (IOException e) {
-		// 	e.printStackTrace();
-		// }
-	}
-	// I want to be able to connect to databases on the fly, exe querires and view the results
-    //https://stackoverflow.com/questions/2839321/connect-java-to-a-mysql-database
-    
 
     //https://docs.oracle.com/javase/tutorial/jdbc/basics/processingsqlstatements.html
     public static void viewTable(Connection con, String dbName)
