@@ -1,10 +1,7 @@
 package dev.dash.execute;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,8 +9,7 @@ import org.springframework.stereotype.Service;
 import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.enums.AuditEventTypeEnum;
-import dev.dash.enums.DdlTypeEnum;
-import dev.dash.execute.util.QueryStringParser;
+import dev.dash.execute.processor.DBProcessor;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
@@ -33,15 +29,18 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
     private QueryConfigRepository queryConfigRepository;
 
     @Autowired
-    ConnectionConfigRepository connectionConfigRepository;
+    private ConnectionConfigRepository connectionConfigRepository;
 
     @Autowired
-    SecurityLogicService securityLogicService;
+    private SecurityLogicService securityLogicService;
 
     @Autowired
-    AuditLogicService auditLogicService;
+    private AuditLogicService auditLogicService;
+
+    @Autowired
+    private DBProcessor mySqlProcessor;
  
-	public JSONArray processQuery(QueryExecution queryExecution) throws SQLException {
+	public JSONArray processQuery(QueryExecution queryExecution){
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
         if(queryConfig == null) {
             log.warn("ProcessQuery failure. No query with the code: {}", queryExecution.getQueryCode());
@@ -64,7 +63,7 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
         return this.processQuery(queryConfig,connectionConfig,queryExecution.getExeData());
 	}
 
-    public JSONArray processQuery(String queryCode, String connectionCode,ExecutionData executionData) throws SQLException {
+    public JSONArray processQuery(String queryCode, String connectionCode,ExecutionData executionData){
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryCode);
         if(queryConfig == null) {
             log.warn("ProcessQuery failure. No query with the code: {}", queryCode);
@@ -88,58 +87,16 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
      * @param executionData 
      * @throws SQLException
      */
-    public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) throws SQLException {
+    public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData){
 
         if ( !checkUserHasPermission(queryConfig,connectionConfig) ) {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryUserLackingRole, executionData);
             return new JSONArray();
         } else {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData);
-            // create the connection
-            Connection connection = createConnection(connectionConfig);
-
-            try { // execute the query
-                String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
-                if ( DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
-                    ResultSet rs = executeQuery(query, connection, executionData);
-                    JSONArray jsonArray = jsonify(rs);
-                    return jsonArray;
-                } else {
-                    int res = executeUpdate(query, connection, executionData);
-                    log.info("Execute Update "+queryConfig.getCode()+" : affected rows:" + res);
-                    JSONArray jsonArray = new JSONArray();
-                    jsonArray.put(new String[]{"Affected Rows : "+res});
-                    return jsonArray;
-                }
-            } catch (SQLException e) {
-                auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryFailed, executionData);
-                e.printStackTrace();
-            } finally { // close the connection
-                connection.close();
-            }
+            JSONArray processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
+            return processQuery;
         }
-        return new JSONArray();
-    }
-
-    private ResultSet executeQuery(String query, Connection connection, ExecutionData executionData) throws SQLException {
-        Statement stmt = null;
-        stmt = connection.createStatement();
-        if(log.isDebugEnabled()){log.debug(query);}
-        ResultSet rs = stmt.executeQuery(query);
-        return rs;
-    }
-
-    private int executeUpdate(String query, Connection connection, ExecutionData executionData) throws SQLException {
-        Statement stmt = null;
-        stmt = connection.createStatement();
-        if(log.isDebugEnabled()){log.debug(query);}
-        return stmt.executeUpdate(query);
-    }
-
-    private Connection createConnection(ConnectionConfig connectionConfig) throws SQLException {
-        Connection connection = null;
-        connection = DriverManager.getConnection(connectionConfig.getUrl(), connectionConfig.getUsername(), connectionConfig.getPassword());
-        return connection;
     }
 
     private boolean checkUserHasPermission ( QueryConfig queryConfig, ConnectionConfig connectionConfig ) {
