@@ -9,6 +9,9 @@ import org.springframework.stereotype.Service;
 import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.enums.AuditEventTypeEnum;
+import dev.dash.enums.DatabaseLanguageEnum;
+import dev.dash.enums.DdlTypeEnum;
+import dev.dash.execute.processor.CassandraProcessor;
 import dev.dash.execute.processor.DBProcessor;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
@@ -39,6 +42,9 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
 
     @Autowired
     private DBProcessor mySqlProcessor;
+
+    @Autowired
+    private DBProcessor cassandraProcessor;
  
 	public JSONArray processQuery(QueryExecution queryExecution){
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
@@ -94,7 +100,15 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
             return new JSONArray();
         } else {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData);
-            JSONArray processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
+            JSONArray processQuery = null;
+            switch (DatabaseLanguageEnum.findType(connectionConfig.getLanguage())) {
+                case MySQL : {
+                    processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                } case CASSANDRA : {
+                    processQuery = cassandraProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                }
+            }
+            
             return processQuery;
         }
     }
