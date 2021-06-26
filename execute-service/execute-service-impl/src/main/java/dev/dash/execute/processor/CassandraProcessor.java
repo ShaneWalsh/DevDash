@@ -46,7 +46,7 @@ public class CassandraProcessor implements DBProcessor {
             ColumnDefinitions columnDefinitions = row.getColumnDefinitions();
             JSONObject obj = new JSONObject();
             int numColumns = columnDefinitions.size();
-            for (int i=1; i<=numColumns; i++) {
+            for (int i=0; i < numColumns; i++) {
                  String column_name = columnDefinitions.getName(i);
                  obj.put(column_name, row.getObject(column_name));
             }
