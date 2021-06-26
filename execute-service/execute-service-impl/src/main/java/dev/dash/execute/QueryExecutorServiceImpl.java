@@ -104,8 +104,10 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
             switch (DatabaseLanguageEnum.findType(connectionConfig.getLanguage())) {
                 case MySQL : {
                     processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                    break;
                 } case CASSANDRA : {
                     processQuery = cassandraProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                    break;
                 }
             }
             
