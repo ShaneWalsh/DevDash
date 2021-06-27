@@ -15,7 +15,7 @@ services:
       - devdash_net
     environment:
       - MYSQL_ROOT_PASSWORD=Monkey2020
-      - MYSQL_DATABASE=tutorial
+      - MYSQL_DATABASE=dddatabase
       - MYSQL_USER=dduser
       - MYSQL_PASSWORD=Monkey2020
     ports:
@@ -34,7 +34,7 @@ services:
       - 8683:8683
     environment:
       - db.driver=com.mysql.jdbc.Driver
-      - db.url=jdbc:mysql://devdash-mysql:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - db.url=jdbc:mysql://devdash-mysql:3306/dddatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
       - db.username=dduser
       - db.password=Monkey2020
       # - SPRING_DATASOURCE_URL=jdbc:mysql://devdash-mysql:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
