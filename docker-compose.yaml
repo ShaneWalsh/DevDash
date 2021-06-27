@@ -2,6 +2,13 @@ version: '3'
 
 services:
 
+  devdash-ui:
+    image: dev_dash_ui
+    networks: 
+      - devdash_net
+    ports:
+      - 8682:80
+
   devdash-mysql:
     image: mysql:8.0
     networks: 
@@ -17,11 +24,12 @@ services:
       - myappdd:/var/lib/mysql
 
   devdash-be:
-    image: dev_dash
+    image: dev_dash_be
     networks: 
       - devdash_net
     depends_on:
       - devdash-mysql
+      - devdash-ui
     ports:
       - 8683:8683
     environment:

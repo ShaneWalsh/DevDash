@@ -101,7 +101,7 @@ public class DefaultDataService {
             // setup connections // todo replace with configurable variables from resources
             ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
                 "jdbc:mysql://localhost:3306/tutorial?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", 
-                "root", "Monkey2020$", configuratorScheme );
+                "root", "Monkey2020", configuratorScheme );
             connectionConfigRepository.saveAndFlush(motorConnectionConfig);
 
             DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );
