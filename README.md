@@ -21,24 +21,42 @@ todo details on pulling the docker images and setting up a local deployment.
 admin and DB passwords via docker secrets
 
 ```sh
-todo some docker commands
+docker-compose up
 ```
 
 For production environments...
 It's recomended you dont connect to a production environment, this is a development tool.
 
 ## Configuration of Users and Roles
+Can create users, and define roles. The other configs will then link to these roles. Roles are a tree structure, with dev dash admin by default the top most parent role. Each Role has one parent role. When permission checking is done on every operation, the tree will be searched to see if you have the specified role or any parent role of it.
 
 ## Configuration of Schema's, Connections and Queries
+Each Schema can have multiple connections. Because in dev environment there can be many db's with the same schema. E.g qa1/2/3/preprod etc.
+Each Schema can have multiple queries. When a query is executed, the schema and connection will be detected from the UI.
 
 ## Configuration of Dashboards, Tabs, Panels and Elements.
 
 WIP table of elements attributes and the different values.
 
-| Attribute | Description |
-| ------ | ------ |
-| order | the position of something? |
-| readOnly | whether its editable or not. |
+| Attribute | type | Description |
+| ------ | ------ | ------ |
+| code | string |Every element must have a unique code. I recommend you open maintain a consistent prefix pattern for your entire dashboard. |
+| label | string | Label to display on the UI for element |
+| replacementCode | string | The value this will replace in queries. Will default to the element code if not specified. Also known as RC. |
+| type | string | BUTTON,TEXT,DATE,SELECT,TABLE,PAGINATOR |
+| order | number | not implemented yet |
+| readOnly | boolean | whether its editable or not. Defaults to false. |
+| hidden | boolean | Prevent cluttering the screen with readonlys. Defaults to false. |
+| exeQuery | Array[string] | List of queries to execute in order when element is activated. e.g Button click. |
+| triggerOnLoad | boolean | false by default. When set to true, the element will trigger when its initialised. e.g good for table loads. |
+| triggerOnEmit | string | Trigger will activate when the specified element code emits any updates. e.g this could be a search button listening to a search text box |
+| dataOn | string | take the data from this emit and populate data with it |
+| dataOnParser | DataParser | the method of data extraction, might be value from a table row, or date etc |
+| dataOnParserConfig | string | the method of data extraction, might be value from a table row, or date etc |
+| overrideDataOn | boolean | means will replace data when dataOn triggers everytime, even if user has altered it. on by default |
+| initialData | any | the elements initial data, can be string/number/array |
+| initialDataParser | DataParser | the method of data extraction, might be value from a table row, or date etc |
+| initialDataParserConfig | string | the method of data extraction, might be value from a table row, or date etc |
 
 ## Development
 
