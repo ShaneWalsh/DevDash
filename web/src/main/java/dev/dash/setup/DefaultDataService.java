@@ -64,6 +64,9 @@ public class DefaultDataService {
     @Value("${dd.default.admin.password}")
     private String defaultAdminPassword;
 
+    @Value("${db.password}")
+    private String databasePassword;
+
     public void setupAllData(){
         // check if the db already exists, if it does, do nothing.
         this.setupSecurityAndRoles();
@@ -101,7 +104,7 @@ public class DefaultDataService {
             // setup connections // todo replace with configurable variables from resources
             ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
                 "jdbc:mysql://devdash-mysql:3306/dddatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", 
-                "dduser", "Monkey2020", configuratorScheme );
+                "dduser", databasePassword, configuratorScheme );
             connectionConfigRepository.saveAndFlush(motorConnectionConfig);
 
             DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );

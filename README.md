@@ -20,6 +20,56 @@ You can use mininal security and audting if you like, create one role and one us
 todo details on pulling the docker images and setting up a local deployment.
 admin and DB passwords via docker secrets
 
+Create a docker compose file, that should allow you to spin up devdash on your local machine.
+```sh
+version: '3'
+
+services:
+
+  devdash-ui:
+    image: shaneneilwalsh/dev_dash_ui
+    networks: 
+      - devdash_net
+    ports:
+      - 8682:80
+
+  devdash-mysql:
+    image: mysql:8.0
+    networks: 
+      - devdash_net
+    environment:
+      - MYSQL_ROOT_PASSWORD=Example2021
+      - MYSQL_DATABASE=dddatabase
+      - MYSQL_USER=dduser
+      - MYSQL_PASSWORD=Example2021
+    ports:
+      - 3306:3306
+    volumes:
+      - myappdd:/var/lib/mysql
+
+  devdash-be:
+    image: shaneneilwalsh/dev_dash_be
+    networks: 
+      - devdash_net
+    depends_on:
+      - devdash-mysql
+      - devdash-ui
+    ports:
+      - 8683:8683
+    environment:
+      - db.driver=com.mysql.jdbc.Driver
+      - db.url=jdbc:mysql://devdash-mysql:3306/dddatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - db.username=dduser
+      - db.password=Example2021
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create
+
+networks: 
+  devdash_net:
+
+volumes:
+  myappdd:
+```
+
 ```sh
 docker-compose up
 ```
