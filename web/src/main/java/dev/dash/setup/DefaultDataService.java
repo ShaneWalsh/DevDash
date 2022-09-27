@@ -60,9 +60,15 @@ public class DefaultDataService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    
     @Value("${dd.default.admin.password}")
     private String defaultAdminPassword;
+
+    @Value("${db.url}")
+    private String databaseUrl;
+
+    @Value("${db.username}")
+    private String databaseUsername;
 
     @Value("${db.password}")
     private String databasePassword;
@@ -102,9 +108,10 @@ public class DefaultDataService {
             configuratorScheme.setSecurityRole( this.securityRoleRepository.findByCode( DD_CONFIGURATOR_QUERY ) );
             schemaConfigRepository.saveAndFlush( configuratorScheme );
             // setup connections // todo replace with configurable variables from resources
+            // local connction we have to have localhost in place of devdash-mysql because the local app does not know the containers name.
             ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
-                "jdbc:mysql://devdash-mysql:3306/dddatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC", 
-                "dduser", databasePassword, configuratorScheme );
+                databaseUrl, 
+                databaseUsername, databasePassword, configuratorScheme );
             connectionConfigRepository.saveAndFlush(motorConnectionConfig);
 
             DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );
