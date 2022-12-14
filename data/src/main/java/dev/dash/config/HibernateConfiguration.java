@@ -57,7 +57,7 @@ public class HibernateConfiguration {
          return transactionManager;
      }
 
-     @Bean
+    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 
          LocalContainerEntityManagerFactoryBean entityManagerFactoryBean = new LocalContainerEntityManagerFactoryBean();

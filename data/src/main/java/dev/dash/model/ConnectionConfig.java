@@ -32,13 +32,8 @@ public class ConnectionConfig {
 	@Column(name="name")
     String name;
 
-    // todo work out we I want to support different connection types
-    // read /read write
-    @Column(name="connectionType")
-    String connectionType;
-
     /**
-     * Mysql, sqlserver etc
+     * Mysql, sqlserver, REST etc
      */
     @Column(name="language")
     String language;

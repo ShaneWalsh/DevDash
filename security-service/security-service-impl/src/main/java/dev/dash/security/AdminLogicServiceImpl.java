@@ -181,6 +181,7 @@ public class AdminLogicServiceImpl implements AdminLogicService {
                 currentParentSecurityRole.getChildren().remove(role);
                 this.securityRoleRepository.save(currentParentSecurityRole);
             }
+            // You cannot set children of a role, its managed by adding new roles and setting the paretn role.
             // if(updateSecurityRoleDto.getChildren() != null && updateSecurityRoleDto.getChildren().size() > 0) {
             //     Set<SecurityRole> childrenRoles = updateSecurityRoleDto.getChildren().stream().map(child -> securityRoleRepository.findByCode(child)).collect(Collectors.toSet());
             //     role.setChildren(childrenRoles);

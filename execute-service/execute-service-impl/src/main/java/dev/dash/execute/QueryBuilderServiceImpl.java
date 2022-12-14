@@ -139,7 +139,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 connectionConfig = connectionConfigRepository.findByCode(connectionDTO.getCode());
 
                 connectionConfig.setName(connectionDTO.getName());
-                connectionConfig.setConnectionType(connectionDTO.getConnectionType());
                 connectionConfig.setLanguage(connectionDTO.getLanguage());
                 connectionConfig.setDriverType(connectionDTO.getDriverType());
                 connectionConfig.setUrl(connectionDTO.getUrl());
@@ -220,7 +219,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
         ConnectionDTO connectionDTO= new ConnectionDTO();
         connectionDTO.setCode( connectionConfig.getCode() );
         connectionDTO.setName( connectionConfig.getName() );
-        connectionDTO.setConnectionType( connectionConfig.getConnectionType() );
         connectionDTO.setLanguage( connectionConfig.getLanguage() );
         connectionDTO.setDriverType( connectionConfig.getDriverType() );
         connectionDTO.setUrl( connectionConfig.getUrl() );

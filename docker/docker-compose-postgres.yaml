@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+
+  devdash-ui:
+    image: dev_dash_ui
+    networks: 
+      - devdash_net
+    ports:
+      - 8682:80
+
+  devdash-postgres:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=dddatabase
+      - POSTGRES_USER=dduser
+      - POSTGRES_PASSWORD=Monkey2020
+    ports:
+      - '5432:5432'
+    volumes: 
+      - ddpostgres:/var/lib/postgresql/data
+
+  devdash-be:
+    image: dev_dash_be
+    networks: 
+      - devdash_net
+    depends_on:
+      - devdash-postgres
+      - devdash-ui
+    ports:
+      - 8683:8683
+    environment:
+      - db.driver=org.postgresql.Driver
+      - db.url=jdbc:postgresql://localhost:5432/dddatabase?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - db.username=dduser
+      - db.password=Monkey2020
+
+networks: 
+  devdash_net:
+
+volumes:
+  ddpostgres:
+    driver: local
