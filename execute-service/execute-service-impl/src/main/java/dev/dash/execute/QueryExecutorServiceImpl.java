@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.enums.AuditEventTypeEnum;
-import dev.dash.enums.DatabaseLanguageEnum;
-import dev.dash.enums.DdlTypeEnum;
-import dev.dash.execute.processor.CassandraProcessor;
-import dev.dash.execute.processor.DBProcessor;
+import dev.dash.enums.ConnectionSourceEnum;
+import dev.dash.execute.processor.RESTProcessor;
+import dev.dash.execute.processor.ResourceProcessor;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
+import dev.dash.model.body.ExecuteResponse;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.body.QueryExecution;
 import dev.dash.model.body.SchemaConnection;
@@ -41,12 +41,15 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
     private AuditLogicService auditLogicService;
 
     @Autowired
-    private DBProcessor mySqlProcessor;
+    private ResourceProcessor mySqlProcessor;
 
     @Autowired
-    private DBProcessor cassandraProcessor;
+    private ResourceProcessor cassandraProcessor;
+
+    @Autowired
+    private RESTProcessor restProcessor;
  
-	public JSONArray processQuery(QueryExecution queryExecution){
+	public ExecuteResponse processQuery(QueryExecution queryExecution){
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryExecution.getQueryCode());
         if(queryConfig == null) {
             log.warn("ProcessQuery failure. No query with the code: {}", queryExecution.getQueryCode());
@@ -69,7 +72,7 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
         return this.processQuery(queryConfig,connectionConfig,queryExecution.getExeData());
 	}
 
-    public JSONArray processQuery(String queryCode, String connectionCode,ExecutionData executionData){
+    public ExecuteResponse processQuery(String queryCode, String connectionCode,ExecutionData executionData){
         QueryConfig queryConfig = queryConfigRepository.findByCode(queryCode);
         if(queryConfig == null) {
             log.warn("ProcessQuery failure. No query with the code: {}", queryCode);
@@ -93,25 +96,27 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
      * @param executionData 
      * @throws SQLException
      */
-    public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData){
-
+    public ExecuteResponse processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData){
         if ( !checkUserHasPermission(queryConfig,connectionConfig) ) {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQueryUserLackingRole, executionData);
-            return new JSONArray();
+            return new ExecuteResponse(new JSONArray(),connectionConfig.getSource().toString(), queryConfig.getDdlType().toString());
         } else {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData);
             JSONArray processQuery = null;
-            switch (DatabaseLanguageEnum.findType(connectionConfig.getLanguage())) {
+            switch (ConnectionSourceEnum.findType(connectionConfig.getSource())) {
                 case MySQL : {
                     processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
                     break;
                 } case CASSANDRA : {
                     processQuery = cassandraProcessor.processQuery(queryConfig,connectionConfig,executionData);
                     break;
+                } case REST : {
+                    processQuery = restProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                    break;
                 }
             }
-            
-            return processQuery;
+            ExecuteResponse executeResponse = new ExecuteResponse(processQuery,connectionConfig.getSource().toString(), queryConfig.getDdlType().toString());
+            return executeResponse;
         }
     }
 

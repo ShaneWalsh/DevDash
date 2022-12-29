@@ -103,6 +103,7 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<!-- TODO Consider switching to gson. -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>

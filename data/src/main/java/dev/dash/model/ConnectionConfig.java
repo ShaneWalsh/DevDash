@@ -35,9 +35,9 @@ public class ConnectionConfig {
     /**
      * Mysql, sqlserver, REST etc
      */
-    @Column(name="language")
-    String language;
-
+    @Column(name="source")
+    String source;
+    
     // I dont think i need to the specify the driver because its in the url.
     @Column(name="driverType")
     String driverType;
@@ -66,11 +66,11 @@ public class ConnectionConfig {
         this.name = name;
     }
 
-    public ConnectionConfig(String code, String name, String language, String url, String username, String password,
+    public ConnectionConfig(String code, String name, String source, String url, String username, String password,
             SchemaConfig schemaConfig) {
         this.code = code;
         this.name = name;
-        this.language = language;
+        this.source = source;
         this.url = url;
         this.username = username;
         this.password = password;

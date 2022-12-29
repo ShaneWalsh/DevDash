@@ -1,10 +1,7 @@
 package dev.dash.execute.processor;
-
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.Cluster.Builder;
 import com.datastax.driver.core.ColumnDefinitions;
 
 import org.json.JSONArray;
@@ -21,7 +18,7 @@ import net.minidev.json.JSONObject;
 
 @Slf4j
 @Service
-public class CassandraProcessor implements DBProcessor {
+public class CassandraProcessor implements ResourceProcessor {
 
     @Autowired
     private AuditLogicService auditLogicService;

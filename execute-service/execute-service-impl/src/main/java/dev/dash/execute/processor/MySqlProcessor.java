@@ -1,7 +1,6 @@
 package dev.dash.execute.processor;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -25,7 +24,7 @@ import org.json.JSONObject;
 
 @Slf4j
 @Service
-public class MySqlProcessor implements DBProcessor {
+public class MySqlProcessor implements ResourceProcessor {
 
     @Autowired
     AuditLogicService auditLogicService;

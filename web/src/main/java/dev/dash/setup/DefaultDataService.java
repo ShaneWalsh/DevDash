@@ -10,12 +10,26 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import dev.dash.dao.*;
+import dev.dash.dao.ConnectionConfigRepository;
+import dev.dash.dao.DashboardConfigRepository;
+import dev.dash.dao.PanelConfigRepository;
+import dev.dash.dao.QueryConfigRepository;
+import dev.dash.dao.SchemaConfigRepository;
+import dev.dash.dao.SecurityRoleRepository;
+import dev.dash.dao.SecurityUserRepository;
+import dev.dash.dao.TabConfigRepository;
 import dev.dash.enums.AdminDefaultRolesEnum;
-import dev.dash.enums.DatabaseLanguageEnum;
+import dev.dash.enums.ConnectionSourceEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.enums.UserTypeEnum;
-import dev.dash.model.*;
+import dev.dash.model.ConnectionConfig;
+import dev.dash.model.DashboardConfig;
+import dev.dash.model.PanelConfig;
+import dev.dash.model.QueryConfig;
+import dev.dash.model.SchemaConfig;
+import dev.dash.model.SecurityRole;
+import dev.dash.model.SecurityUser;
+import dev.dash.model.TabConfig;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -109,7 +123,7 @@ public class DefaultDataService {
             schemaConfigRepository.saveAndFlush( configuratorScheme );
             // setup connections // todo replace with configurable variables from resources
             // local connction we have to have localhost in place of devdash-mysql because the local app does not know the containers name.
-            ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",DatabaseLanguageEnum.MySQL.name(),
+            ConnectionConfig motorConnectionConfig = new ConnectionConfig("DD_DevDash_Connection","DevDash Connection",ConnectionSourceEnum.MySQL.name(),
                 databaseUrl, 
                 databaseUsername, databasePassword, configuratorScheme );
             connectionConfigRepository.saveAndFlush(motorConnectionConfig);
@@ -332,14 +346,14 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 				
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Connection_Create", "Connection Create",
-            "insert into connectionconfig (code,name,language,username,password,url,schemaconfig_id) "+
-             "values( '${DD_Configurator_Connection_Create_F_Code}', '${DD_Configurator_Connection_Create_F_Name}', '${DD_Configurator_Connection_Create_F_Language}', " + 
+            "insert into connectionconfig (code,name,source,username,password,url,schemaconfig_id) "+
+             "values( '${DD_Configurator_Connection_Create_F_Code}', '${DD_Configurator_Connection_Create_F_Name}', '${DD_Configurator_Connection_Create_F_Source}', " + 
              " '${DD_Configurator_Connection_Create_F_Userame}', '${DD_Configurator_Connection_Create_F_Password}', '${DD_Configurator_Connection_Create_F_Url}', '${DD_Configurator_Connection_Create_F_Schemaconfig_Id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Connection_Update", "Connection Update",
             "update connectionconfig set code='${DD_Configurator_Connection_Update_F_Code}', name='${DD_Configurator_Connection_Update_F_Name}', " + 
-             "language='${DD_Configurator_Connection_Update_F_Language}', username='${DD_Configurator_Connection_Update_F_Userame}', password='${DD_Configurator_Connection_Update_F_Password}'," +
+             "source='${DD_Configurator_Connection_Update_F_Source}', username='${DD_Configurator_Connection_Update_F_Userame}', password='${DD_Configurator_Connection_Update_F_Password}'," +
              " url='${DD_Configurator_Connection_Update_F_Url}', schemaconfig_id=${DD_Configurator_Connection_Update_F_Schemaconfig_Id} " + 
              " where connectionconfig_id = ${DD_Configurator_Connection_Update_F_Connection_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
 
@@ -357,7 +371,7 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
-            "{\"code\":\"DD_Configurator_Connection_Create_F_Language\",\"type\":\"TEXT\",\"label\":\"Language\"}, "+
+            "{\"code\":\"DD_Configurator_Connection_Create_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Userame\",\"type\":\"TEXT\",\"label\":\"Username\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\"}, "+
@@ -370,7 +384,7 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Connection_Update_F_Language\",\"type\":\"TEXT\",\"label\":\"Language\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"language\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Connection_Update_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"source\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Userame\",\"type\":\"TEXT\",\"label\":\"Username\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"username\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"password\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"url\\\"}\"},"+
@@ -392,14 +406,14 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 				
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Query_Create", "Query Create",
-            "insert into queryconfig ( code, description, ddl_type, queryString, schemaconfig_id ) "+
+            "insert into queryconfig ( code, description, ddl_type, path, queryString, schemaconfig_id ) "+
              "values( '${DD_Configurator_Query_Create_F_Code}', '${DD_Configurator_Query_Create_F_Description}', '${DD_Configurator_Query_Create_F_Ddl_Type}', " + 
-             " '${DD_Configurator_Query_Create_F_QueryString}', '${DD_Configurator_Query_Create_F_Schemaconfig_Id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+             " '${DD_Configurator_Query_Create_F_Source}', '${DD_Configurator_Query_Create_F_QueryString}', '${DD_Configurator_Query_Create_F_Schemaconfig_Id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Query_Update", "Query Update",
             "update queryconfig set code='${DD_Configurator_Query_Update_F_Code}', description='${DD_Configurator_Query_Update_F_Description}', " + 
-             "ddl_type='${DD_Configurator_Query_Update_F_Ddl_Type}', queryString='${DD_Configurator_Query_Update_F_QueryString}', schemaconfig_id=${DD_Configurator_Query_Update_F_Schemaconfig_Id} " + 
+             "ddl_type='${DD_Configurator_Query_Update_F_Ddl_Type}', source='${DD_Configurator_Query_Update_F_Source}', queryString='${DD_Configurator_Query_Update_F_QueryString}', schemaconfig_id=${DD_Configurator_Query_Update_F_Schemaconfig_Id} " + 
              " where queryconfig_id = ${DD_Configurator_Query_Update_F_Query_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
 
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
@@ -420,7 +434,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Query_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\"}, "+
-            "{\"code\":\"DD_Configurator_Query_Create_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\"}, " +
+            "{\"code\":\"DD_Configurator_Query_Create_F_Path\",\"type\":\"TEXT\",\"label\":\"Rest Path\"}, "+
+            "{\"code\":\"DD_Configurator_Query_Create_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query Body\"}, " +
             "{\"code\":\"DD_Configurator_Query_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Query_Create\",\"DD_DevDash_Query_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -431,6 +446,7 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Query_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"description\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"ddl_type\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Query_Update_F_Path\",\"type\":\"TEXT\",\"label\":\"DDL Type\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"path\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryString\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Id\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Query_Id\",\"type\":\"TEXT\",\"label\":\"Query Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryConfig_id\\\"}\" },"+

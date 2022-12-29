@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.dash.execute.QueryExecutorService;
+import dev.dash.model.body.ExecuteResponse;
 import dev.dash.model.body.QueryExecution;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,11 +26,10 @@ public class ElementQueryController {
     private QueryExecutorService queryExecutorService;
 
     @PostMapping("/execute")
-    public ResponseEntity<List<Object>> execute(@RequestBody final QueryExecution queryExecution) throws SQLException {
+    public ResponseEntity<ExecuteResponse> execute(@RequestBody final QueryExecution queryExecution) throws SQLException {
         if(log.isDebugEnabled()) log.debug(queryExecution.toString()); // todo debug
-        final JSONArray arr = queryExecutorService.processQuery(queryExecution);
-        final List<Object> list = arr.toList();
-        if(log.isDebugEnabled()) list.stream().forEach(obj -> log.debug(obj.toString()));
-        return new ResponseEntity<List<Object>>(list,HttpStatus.OK);
+        final ExecuteResponse data = queryExecutorService.processQuery(queryExecution);
+        if(log.isDebugEnabled()) log.debug(data.toString());
+        return new ResponseEntity<>(data,HttpStatus.OK);
     }
 }

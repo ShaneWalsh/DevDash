@@ -6,7 +6,7 @@ import lombok.Data;
 public class ConnectionDTO {
     private String code; 
     private String name;
-    private String language;
+    private String source;
     private String driverType;
     private String url;
     private String username;

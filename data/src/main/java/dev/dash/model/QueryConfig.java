@@ -33,11 +33,23 @@ public class QueryConfig implements Auditable {
 	@Column(name="description")
     private String description;
 
-    @Column(name="queryString", length = 15000)
-    private String queryString;
-
+    /**
+     * The Method of the SQL query or HTTP verb
+     */
     @Column(name="ddl_type")
     private String ddlType;
+
+    /**
+     * URL path for HTTP methods, appended to Connection URL
+     */
+    @Column(name="path")
+    private String path;
+
+    /**
+     * The body of the SQL query or HTTP request
+     */
+    @Column(name="queryString", length = 15000)
+    private String queryString;
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schemaconfig_id", nullable = false)

@@ -6,8 +6,9 @@ import lombok.Data;
 public class QueryDTO {
 	private String code;
     private String description;
-    private String queryString;
     private String ddlType;
+    private String path;
+    private String queryString;
     private String schemaCode;
     private String securityRole;
 }

@@ -139,7 +139,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 connectionConfig = connectionConfigRepository.findByCode(connectionDTO.getCode());
 
                 connectionConfig.setName(connectionDTO.getName());
-                connectionConfig.setLanguage(connectionDTO.getLanguage());
+                connectionConfig.setSource(connectionDTO.getSource());
                 connectionConfig.setDriverType(connectionDTO.getDriverType());
                 connectionConfig.setUrl(connectionDTO.getUrl());
                 connectionConfig.setUsername(connectionDTO.getUsername());
@@ -148,7 +148,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
             } else {
                 connectionConfig = new ConnectionConfig (
                     connectionDTO.getCode(), connectionDTO.getName(),
-                    connectionDTO.getLanguage(), connectionDTO.getUrl(),
+                    connectionDTO.getSource(), connectionDTO.getUrl(),
                     connectionDTO.getUsername(), connectionDTO.getPassword(),
                     schemaConfig
                 );
@@ -219,7 +219,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
         ConnectionDTO connectionDTO= new ConnectionDTO();
         connectionDTO.setCode( connectionConfig.getCode() );
         connectionDTO.setName( connectionConfig.getName() );
-        connectionDTO.setLanguage( connectionConfig.getLanguage() );
+        connectionDTO.setSource( connectionConfig.getSource() );
         connectionDTO.setDriverType( connectionConfig.getDriverType() );
         connectionDTO.setUrl( connectionConfig.getUrl() );
         connectionDTO.setUsername( connectionConfig.getUsername() );
@@ -235,6 +235,7 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
         queryDTO.setDescription( queryConfig.getDescription() );
         queryDTO.setQueryString( queryConfig.getQueryString() );
         queryDTO.setDdlType( queryConfig.getDdlType() );
+        queryDTO.setPath( queryConfig.getPath() );
         if( queryConfig.getSecurityRole() != null ) queryDTO.setSecurityRole( queryConfig.getSecurityRole().getCode() );
         if( queryConfig.getSchemaConfig() != null ) queryDTO.setSchemaCode( queryConfig.getSchemaConfig().getCode() );
         return queryDTO;
