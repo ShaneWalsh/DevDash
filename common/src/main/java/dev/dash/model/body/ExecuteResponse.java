@@ -1,5 +1,9 @@
 package dev.dash.model.body;
 
+import java.util.List;
+
+import org.json.JSONArray;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,14 +13,15 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ExecuteResponse {
-    private Object data;
+    private List<Object> data;
     private String connectionSource;
     private String ddlType;
     private String errorMessage;
 
-    public ExecuteResponse( Object data,String connectionSource, String ddlType ){
-        this.data = data;
+    public ExecuteResponse( JSONArray data,String connectionSource, String ddlType ){
+        this.data = data.toList();
         this.connectionSource = connectionSource;
         this.ddlType = ddlType;
     }
+
 }
