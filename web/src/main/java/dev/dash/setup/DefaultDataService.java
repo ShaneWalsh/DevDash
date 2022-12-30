@@ -128,6 +128,8 @@ public class DefaultDataService {
                 databaseUsername, databasePassword, configuratorScheme );
             connectionConfigRepository.saveAndFlush(motorConnectionConfig);
 
+            setupReusable(configuratorScheme);
+
             DashboardConfig dashboardScreens = setupDashboardScreens( configuratorScheme );
             setupTabScreens( configuratorScheme, dashboardScreens );
             setupPanelScreens( configuratorScheme, dashboardScreens );
@@ -141,6 +143,16 @@ public class DefaultDataService {
     }
 
     /**
+     * Create reusable elements for reuse in other elements.
+     * @param configuratorScheme
+     */
+    private void setupReusable(SchemaConfig configuratorScheme) {
+        QueryConfig secRoleSelectListQuery = new QueryConfig("DD_DevDash_Sec_Linkable_Role", "SecurityRoles Select List",
+            "Select securityRole_id as value, code as label from securityRole", configuratorScheme);
+            queryConfigRepository.saveAndFlush(secRoleSelectListQuery);
+    }
+
+    /**
      * Default configs for dashboards, should this not be populated by an sql file on start up? 
      */ 
     public DashboardConfig setupDashboardScreens(SchemaConfig configuratorScheme ) {
@@ -151,11 +163,11 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Dashboard_Create", "Dashboard Create",
-            "insert into dashboardconfig (code,name) values('${DD_Configurator_Dashboard_Create_F_Code}','${DD_Configurator_Dashboard_Create_F_Name}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+            "insert into dashboardconfig (code,name,securityRole_id) values('${DD_Configurator_Dashboard_Create_F_Code}','${DD_Configurator_Dashboard_Create_F_Name}','${DD_Configurator_Dashboard_Create_F_Sec_Role}')", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Dashboard_Update", "Dashboard Update",
-            "update dashboardconfig set code='${DD_Configurator_Dashboard_Update_F_Code}', name='${DD_Configurator_Dashboard_Update_F_Name}' where dashboardconfig_id = ${DD_Configurator_Dashboard_Update_F_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
+            "update dashboardconfig set code='${DD_Configurator_Dashboard_Update_F_Code}', name='${DD_Configurator_Dashboard_Update_F_Name}', securityRole_id='${DD_Configurator_Dashboard_Update_F_Sec_Role}' where dashboardconfig_id = ${DD_Configurator_Dashboard_Update_F_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
         DashboardConfig dashboardConfig = new DashboardConfig("DD_Configurator_Dash","Configurator Dash");
@@ -169,17 +181,22 @@ public class DefaultDataService {
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Dashboard_List", "Dashboard List", 3,1,
-        "[{\"code\":\"DD_Configurator_Dashboard_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_List\"},{\"code\":\"DD_Configurator_Dashboard_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Dashboard_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_List\"},{\"code\":\"DD_Configurator_Dashboard_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Dashboard_List\",\"DD_DevDash_Sec_Linkable_Role\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Dashboard_Create", "Dashboard Create", 1,2,
-        "[{\"code\":\"DD_Configurator_Dashboard_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, {\"code\":\"DD_Configurator_Dashboard_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, {\"code\":\"DD_Configurator_Dashboard_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Dashboard_Create\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false}]", tabConfig);
+        "["+
+            "{\"code\":\"DD_Configurator_Dashboard_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
+            "{\"code\":\"DD_Configurator_Dashboard_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+ 
+            "{\"code\":\"DD_Configurator_Dashboard_Create_F_Sec_Role\",\"type\":\"SELECT\",\"label\":\"Role Permission\", \"dataOn\":\"DD_DevDash_Sec_Linkable_Role\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
+            "{\"code\":\"DD_Configurator_Dashboard_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Dashboard_Create\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
         panelConfig = new PanelConfig("DD_Configurator_Dashboard_Update", "Dashboard Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Dashboard_Update_F_Sec_Role\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"securityRole_id\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"hidden\":true,\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Dashboard_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"confirmation\":true,\"exeQuery\":[\"DD_DevDash_Dashboard_Update\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -305,11 +322,11 @@ public class DefaultDataService {
         queryConfigRepository.saveAndFlush(dashboardListQuery);
 
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Schema_Create", "Schema Create",
-            "insert into schemaconfig (code,name) values('${DD_Configurator_Schema_Create_F_Code}','${DD_Configurator_Schema_Create_F_Name}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+            "insert into schemaconfig (code,name, securityRole_id) values('${DD_Configurator_Schema_Create_F_Code}','${DD_Configurator_Schema_Create_F_Name}', ${DD_Configurator_Schema_Create_F_Sec_Role})", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Schema_Update", "Schema Update",
-            "update schemaconfig set code='${DD_Configurator_Schema_Update_F_Code}', name='${DD_Configurator_Schema_Update_F_Name}' where schemaconfig_id = ${DD_Configurator_Schema_Update_F_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
+            "update schemaconfig set code='${DD_Configurator_Schema_Update_F_Code}', name='${DD_Configurator_Schema_Update_F_Name}', securityRole_id='${DD_Configurator_Schema_Update_F_Sec_Role}' where schemaconfig_id = ${DD_Configurator_Schema_Update_F_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
 
         TabConfig tabConfig  = new TabConfig("DD_Configurator_Schemas","Schemas",4,dashboardScreens);
@@ -317,17 +334,22 @@ public class DefaultDataService {
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Schema_List", "Schema List", 3,1,
-        "[{\"code\":\"DD_Configurator_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Schema_List\"},{\"code\":\"DD_Configurator_Schema_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Schema_List\"},{\"code\":\"DD_Configurator_Schema_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Schema_List\",\"DD_DevDash_Sec_Linkable_Role\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Schema_Create", "Schema Create", 1,2,
-        "[{\"code\":\"DD_Configurator_Schema_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, {\"code\":\"DD_Configurator_Schema_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, {\"code\":\"DD_Configurator_Schema_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Schema_Create\",\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":false}]", tabConfig);
+        "["+
+            "{\"code\":\"DD_Configurator_Schema_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
+            "{\"code\":\"DD_Configurator_Schema_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
+            "{\"code\":\"DD_Configurator_Schema_Create_F_Sec_Role\",\"type\":\"SELECT\",\"label\":\"Role Permission\", \"dataOn\":\"DD_DevDash_Sec_Linkable_Role\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
+            "{\"code\":\"DD_Configurator_Schema_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Schema_Create\",\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":false}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
 
         panelConfig = new PanelConfig("DD_Configurator_Schema_Update", "Schema Update", 2,2,
         "["+
             "{\"code\":\"DD_Configurator_Schema_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Schema_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Schema_Update_F_Sec_Role\",\"type\":\"TEXT\",\"label\":\"Role Permission\", \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"securityRole_id\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Schema_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Schema_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"exeQuery\":[\"DD_DevDash_Schema_Update\",\"DD_DevDash_Schema_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -408,7 +430,7 @@ public class DefaultDataService {
         QueryConfig dashboardCreateQuery = new QueryConfig("DD_DevDash_Query_Create", "Query Create",
             "insert into queryconfig ( code, description, ddl_type, path, queryString, schemaconfig_id ) "+
              "values( '${DD_Configurator_Query_Create_F_Code}', '${DD_Configurator_Query_Create_F_Description}', '${DD_Configurator_Query_Create_F_Ddl_Type}', " + 
-             " '${DD_Configurator_Query_Create_F_Source}', '${DD_Configurator_Query_Create_F_QueryString}', '${DD_Configurator_Query_Create_F_Schemaconfig_Id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+             " '${DD_Configurator_Query_Create_F_Path}', '${DD_Configurator_Query_Create_F_QueryString}', '${DD_Configurator_Query_Create_F_Schemaconfig_Id}')", DdlTypeEnum.Insert.name(), configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardCreateQuery);
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Query_Update", "Query Update",
@@ -434,8 +456,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Query_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\"}, "+
-            "{\"code\":\"DD_Configurator_Query_Create_F_Path\",\"type\":\"TEXT\",\"label\":\"Rest Path\"}, "+
-            "{\"code\":\"DD_Configurator_Query_Create_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query Body\"}, " +
+            "{\"code\":\"DD_Configurator_Query_Create_F_Path\",\"type\":\"TEXT\",\"label\":\"Path\"}, "+
+            "{\"code\":\"DD_Configurator_Query_Create_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\"}, " +
             "{\"code\":\"DD_Configurator_Query_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Query_Create\",\"DD_DevDash_Query_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
@@ -446,7 +468,7 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Query_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Description\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"description\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"ddl_type\\\"}\"},"+
-            "{\"code\":\"DD_Configurator_Query_Update_F_Path\",\"type\":\"TEXT\",\"label\":\"DDL Type\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"path\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Query_Update_F_Path\",\"type\":\"TEXT\",\"label\":\"Path\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"path\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryString\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Id\", \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Query_Update_F_Query_Id\",\"type\":\"TEXT\",\"label\":\"Query Id\", \"hidden\":true, \"dataOn\":\"DD_Configurator_Query_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"queryConfig_id\\\"}\" },"+
