@@ -108,6 +108,19 @@ WIP table of elements attributes and the different values.
 | initialDataParser | DataParser | the method of data extraction, might be value from a table row, or date etc |
 | initialDataParserConfig | string | the method of data extraction, might be value from a table row, or date etc |
 
+## Table Element
+The table element will activate on clicking on a table row. The row data is then exposed in the activation. 
+Before activation, query submitted data is null, after activation the row codes are appended to the panel code and exposed for replacement in queries.
+
+> Activation: row values (e.g id) would be exposed via data parsing.
+>
+> Submission: row values (e.g id) on panel1 would be panel1_id replacementcode for BE to 
+use.
+
+| Attribute | type | Description |
+| ------ | ------ | ------ |
+| columns | string | todo but can be used to add nice column names to tables rather than inferred values.|
+
 ## Development
 
 Want to contribute? Great!

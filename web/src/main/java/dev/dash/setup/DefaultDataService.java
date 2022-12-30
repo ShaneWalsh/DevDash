@@ -202,7 +202,17 @@ public class DefaultDataService {
         "]", tabConfig);
 
         panelConfigRepository.saveAndFlush(panelConfig);
-        
+
+        // Dashboard has a many to many relationship with Schema, so we need an additional table here to update that relationship also.
+        QueryConfig dashboardSchemaListQuery = new QueryConfig("DD_DevDash_Dashboard_Schema_List", "Dashboard Schema List",
+            "Select * from dashboardconfig_to_schemaconfig where dashboardconfig_id = ${DD_Configurator_Dashboard_List_dashboardconfig_id}", configuratorScheme);
+        queryConfigRepository.saveAndFlush(dashboardSchemaListQuery);
+        // triggerOnEmit
+
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Schema_List", "Dashboard - Schema List", 3,3,
+        "[{\"code\":\"DD_Configurator_Dashboard_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_Schema_List\",\"exeQuery\":[\"DD_DevDash_Dashboard_Schema_List\"],\"triggerOnEmit\":\"DD_Configurator_Dashboard_List_Table1\"}]", tabConfig);
+        panelConfigRepository.saveAndFlush(panelConfig);
+
         return dashboardConfig;
     }
 
@@ -435,7 +445,7 @@ public class DefaultDataService {
 
         QueryConfig dashboardUpdateQuery = new QueryConfig("DD_DevDash_Query_Update", "Query Update",
             "update queryconfig set code='${DD_Configurator_Query_Update_F_Code}', description='${DD_Configurator_Query_Update_F_Description}', " + 
-             "ddl_type='${DD_Configurator_Query_Update_F_Ddl_Type}', source='${DD_Configurator_Query_Update_F_Source}', queryString='${DD_Configurator_Query_Update_F_QueryString}', schemaconfig_id=${DD_Configurator_Query_Update_F_Schemaconfig_Id} " + 
+             "ddl_type='${DD_Configurator_Query_Update_F_Ddl_Type}', path='${DD_Configurator_Query_Update_F_Path}', queryString='${DD_Configurator_Query_Update_F_QueryString}', schemaconfig_id=${DD_Configurator_Query_Update_F_Schemaconfig_Id} " + 
              " where queryconfig_id = ${DD_Configurator_Query_Update_F_Query_Id} ", DdlTypeEnum.Update.name(), configuratorScheme);
 
         queryConfigRepository.saveAndFlush(dashboardUpdateQuery);
