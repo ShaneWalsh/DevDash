@@ -149,7 +149,11 @@ public class DefaultDataService {
     private void setupReusable(SchemaConfig configuratorScheme) {
         QueryConfig secRoleSelectListQuery = new QueryConfig("DD_DevDash_Sec_Linkable_Role", "SecurityRoles Select List",
             "Select securityRole_id as value, code as label from securityRole", configuratorScheme);
-            queryConfigRepository.saveAndFlush(secRoleSelectListQuery);
+        queryConfigRepository.saveAndFlush(secRoleSelectListQuery);
+
+        QueryConfig schemaSelectListQuery = new QueryConfig("DD_DevDash_Linkable_Schema", "Schema Select List",
+            "Select schemaconfig_id as value, code as label from schemaconfig", configuratorScheme);
+        queryConfigRepository.saveAndFlush(schemaSelectListQuery);
     }
 
     /**
@@ -200,17 +204,38 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Dashboard_Update_F_Id\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"hidden\":true,\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
             "{\"code\":\"DD_Configurator_Dashboard_Update_BT_Update\",\"type\":\"BUTTON\", \"label\":\"Update\",\"confirmation\":true,\"exeQuery\":[\"DD_DevDash_Dashboard_Update\",\"DD_DevDash_Dashboard_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
-
         panelConfigRepository.saveAndFlush(panelConfig);
 
         // Dashboard has a many to many relationship with Schema, so we need an additional table here to update that relationship also.
         QueryConfig dashboardSchemaListQuery = new QueryConfig("DD_DevDash_Dashboard_Schema_List", "Dashboard Schema List",
             "Select * from dashboardconfig_to_schemaconfig where dashboardconfig_id = ${DD_Configurator_Dashboard_List_dashboardconfig_id}", configuratorScheme);
         queryConfigRepository.saveAndFlush(dashboardSchemaListQuery);
-        // triggerOnEmit
+        
+        QueryConfig dashboardSchemaCreateQuery = new QueryConfig("DD_DevDash_Dashboard_Schema_Create", "Dashboard Schema Create",
+            "insert into dashboardconfig_to_schemaconfig (dashboardconfig_id,schemaconfig_id) values('${DD_Configurator_Dashboard_Schema_Create_F_Dashboard}','${DD_Configurator_Dashboard_Schema_Create_F_Schema}')", DdlTypeEnum.Insert.name(), configuratorScheme);
+        queryConfigRepository.saveAndFlush(dashboardSchemaCreateQuery);
+        
+        QueryConfig dashboardSchemaDeleteQuery = new QueryConfig("DD_DevDash_Dashboard_Schema_Delete", "Dashboard Schema Delete",
+            "delete from dashboardconfig_to_schemaconfig where dashboardconfig_id='${DD_Configurator_Dashboard_Schema_Update_F_Dashboard}' AND schemaconfig_id='${DD_Configurator_Dashboard_Schema_Update_F_Schema}' ", DdlTypeEnum.Delete.name(), configuratorScheme);
+        queryConfigRepository.saveAndFlush(dashboardSchemaDeleteQuery);
 
         panelConfig = new PanelConfig("DD_Configurator_Dashboard_Schema_List", "Dashboard - Schema List", 3,3,
-        "[{\"code\":\"DD_Configurator_Dashboard_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_Schema_List\",\"exeQuery\":[\"DD_DevDash_Dashboard_Schema_List\"],\"triggerOnEmit\":\"DD_Configurator_Dashboard_List_Table1\"}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Dashboard_Schema_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Dashboard_Schema_List\",\"exeQuery\":[\"DD_DevDash_Dashboard_Schema_List\",\"DD_DevDash_Linkable_Schema\"],\"triggerOnEmit\":\"DD_Configurator_Dashboard_List_Table1\"}]", tabConfig);
+        panelConfigRepository.saveAndFlush(panelConfig);
+
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Schema_Create", "Dashboard Schema Create", 1,4,
+        "["+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Create_F_Dashboard\",\"type\":\"TEXT\",\"label\":\"Id\", \"dataOn\":\"DD_Configurator_Dashboard_List_Table1\",\"hidden\":false,\"readonly\":true,\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Create_F_Schema\",\"type\":\"SELECT\",\"label\":\"Schema\", \"dataOn\":\"DD_DevDash_Linkable_Schema\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Dashboard_Schema_Create\",\"DD_DevDash_Dashboard_Schema_List\"],\"triggerOnLoad\":false}]", tabConfig);
+        panelConfigRepository.saveAndFlush(panelConfig);  
+
+        panelConfig = new PanelConfig("DD_Configurator_Dashboard_Schema_Update", "Dashboard Schema Update", 2,4,
+        "["+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Update_F_Dashboard\",\"type\":\"TEXT\",\"label\":\"Dashboard\", \"readonly\":true, \"dataOn\":\"DD_Configurator_Dashboard_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"dashboardconfig_id\\\"}\"},"+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Update_F_Schema\",\"type\":\"TEXT\",\"label\":\"Schema\", \"readonly\":true, \"dataOn\":\"DD_Configurator_Dashboard_Schema_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"schemaconfig_id\\\"}\" },"+
+            "{\"code\":\"DD_Configurator_Dashboard_Schema_Update_BT_Delete\",\"type\":\"BUTTON\", \"label\":\"Delete\",\"confirmation\":true,\"exeQuery\":[\"DD_DevDash_Dashboard_Schema_Delete\",\"DD_DevDash_Dashboard_Schema_List\"],\"triggerOnLoad\":false} "+
+        "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         return dashboardConfig;
