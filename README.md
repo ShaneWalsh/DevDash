@@ -107,6 +107,7 @@ WIP table of elements attributes and the different values.
 | initialData | any | the elements initial data, can be string/number/array |
 | initialDataParser | DataParser | the method of data extraction, might be value from a table row, or date etc |
 | initialDataParserConfig | string | the method of data extraction, might be value from a table row, or date etc |
+| truncateDataLength | number | truncate the data in display fields. Editable cells still contain full data |
 
 ## Table Element
 The table element will activate on clicking on a table row. The row data is then exposed in the activation. 
