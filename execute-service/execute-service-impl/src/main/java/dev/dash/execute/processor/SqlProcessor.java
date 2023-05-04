@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.dash.enums.AuditEventTypeEnum;
+import dev.dash.enums.ConnectionSourceEnum;
 import dev.dash.enums.DdlTypeEnum;
 import dev.dash.execute.connector.MySQLConnector;
+import dev.dash.execute.connector.PostgreSQLConnector;
+import dev.dash.execute.connector.SQLConnector;
 import dev.dash.execute.util.QueryStringParser;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
@@ -24,14 +27,28 @@ import org.json.JSONObject;
 
 @Slf4j
 @Service
-public class MySqlProcessor implements ResourceProcessor {
+public class SqlProcessor implements ResourceProcessor {
 
     @Autowired
     AuditLogicService auditLogicService;
 
+    public SQLConnector getConnection(ConnectionConfig connectionConfig) {
+        SQLConnector connector = null;
+        switch (ConnectionSourceEnum.findType(connectionConfig.getSource())) {
+            case MySQL : {
+                connector = new MySQLConnector(connectionConfig);
+                break;
+            } case PostgreSQL : {
+                connector = new PostgreSQLConnector(connectionConfig);
+                break;
+            }
+        }
+        return connector;
+    }
+
     @Override
     public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) {
-        MySQLConnector connector = new MySQLConnector(connectionConfig);
+        SQLConnector connector = getConnection(connectionConfig);
         Connection connection = connector.connect();
         try { // execute the query
             String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );

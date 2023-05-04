@@ -104,6 +104,10 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
             auditLogicService.auditEntityEvent(queryConfig, AuditEventTypeEnum.ExecuteQuery, executionData);
             JSONArray processQuery = null;
             switch (ConnectionSourceEnum.findType(connectionConfig.getSource())) {
+                case PostgreSQL: {
+                    processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
+                    break;
+                }
                 case MySQL : {
                     processQuery = mySqlProcessor.processQuery(queryConfig,connectionConfig,executionData);
                     break;
