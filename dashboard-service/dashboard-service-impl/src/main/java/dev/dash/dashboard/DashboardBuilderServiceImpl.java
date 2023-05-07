@@ -127,7 +127,6 @@ public class DashboardBuilderServiceImpl implements DashboardBuilderService {
                 if( schemaConfigSet == null ) {
                     schemaConfigSet = new HashSet<>();
                 }
-
                 if ( StringUtil.isVaildString( schemaConfigCode) && schemaConfigRepository.existsByCode(schemaConfigCode) ) {
                     SchemaConfig schemaConfigInstance =  schemaConfigRepository.findByCode(schemaConfigCode);
                     schemaConfigSet.add( schemaConfigInstance );

@@ -10,8 +10,10 @@ import dev.dash.dao.ConnectionConfigRepository;
 import dev.dash.dao.QueryConfigRepository;
 import dev.dash.enums.AuditEventTypeEnum;
 import dev.dash.enums.ConnectionSourceEnum;
+import dev.dash.execute.processor.CassandraProcessor;
 import dev.dash.execute.processor.RESTProcessor;
 import dev.dash.execute.processor.ResourceProcessor;
+import dev.dash.execute.processor.SqlProcessor;
 import dev.dash.model.ConnectionConfig;
 import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecuteResponse;
@@ -41,10 +43,10 @@ public class QueryExecutorServiceImpl implements QueryExecutorService {
     private AuditLogicService auditLogicService;
 
     @Autowired
-    private ResourceProcessor mySqlProcessor;
+    private SqlProcessor mySqlProcessor;
 
     @Autowired
-    private ResourceProcessor cassandraProcessor;
+    private CassandraProcessor cassandraProcessor;
 
     @Autowired
     private RESTProcessor restProcessor;
