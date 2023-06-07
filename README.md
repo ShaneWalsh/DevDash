@@ -134,8 +134,8 @@ TODO
 todo 
 
 ### builds
-Change hibernate.hbm2ddl.auto from create to update for new builds. create is used for active development.
-mvn clean install will compile the code
+Change hibernate.hbm2ddl.auto from *create* to *update* for new builds. create is used for active development.
+*mvn clean install* will compile the code
 
 Build Docker image
 docker image build -t shaneneilwalsh/dev_dash_be:tagvalue .

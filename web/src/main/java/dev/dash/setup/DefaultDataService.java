@@ -433,7 +433,8 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\"}, "+
-            "{\"code\":\"DD_Configurator_Connection_Create_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\"}, "+
+            //"{\"code\":\"DD_Configurator_Connection_Create_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\"}, "+
+            "{\"code\":\"DD_Configurator_Connection_Create_F_Source\",\"type\":\"SELECT\",\"label\":\"Source\", \"initialData\":\"[{\\\"value\\\":\\\"REST\\\", \\\"label\\\":\\\"REST\\\" },{ \\\"value\\\":\\\"MySQL\\\", \\\"label\\\":\\\"MySQL\\\" },{ \\\"value\\\":\\\"PostgreSQL\\\", \\\"label\\\":\\\"PostgreSQL\\\" },{ \\\"value\\\":\\\"CASSANDRA\\\", \\\"label\\\":\\\"CASSANDRA\\\" }]\", \"initialDataParser\":\"SelectKeyParser\",\"initialDataParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Userame\",\"type\":\"TEXT\",\"label\":\"Username\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\"}, "+
@@ -448,6 +449,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Connection_Update_F_Code\",\"type\":\"TEXT\",\"label\":\"Code\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"code\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Name\",\"type\":\"TEXT\",\"label\":\"Name\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"name\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"source\\\"}\"},"+
+            // TODO figure out why this breaks the UI, it makes no sense!
+            //"{\"code\":\"DD_Configurator_Connection_Update_F_Source\",\"type\":\"TEXT\",\"label\":\"Source\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"source\\\"}\",\"initialData\":\"[{\\\"value\\\":\\\"REST\\\", \\\"label\\\":\\\"REST\\\" },{ \\\"value\\\":\\\"MySQL\\\", \\\"label\\\":\\\"MySQL\\\" },{ \\\"value\\\":\\\"PostgreSQL\\\", \\\"label\\\":\\\"PostgreSQL\\\" },{ \\\"value\\\":\\\"CASSANDRA\\\", \\\"label\\\":\\\"CASSANDRA\\\" }]\", \"initialDataParser\":\"SelectKeyParser\",\"initialDataParserConfig\":\"{\\\"jsonParsable\\\":true}\" },"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Userame\",\"type\":\"TEXT\",\"label\":\"Username\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"username\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"password\\\"}\"},"+
             "{\"code\":\"DD_Configurator_Connection_Update_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\", \"dataOn\":\"DD_Configurator_Connection_List_Table1\",\"dataOnParser\":\"StringParser\",\"dataOnParserConfig\":\"{\\\"tableRowColumnId\\\":\\\"url\\\"}\"},"+
