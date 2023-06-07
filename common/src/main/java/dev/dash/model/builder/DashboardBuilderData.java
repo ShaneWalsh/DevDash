@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class DashboardBuilderData {
-    private List<DashboardDTO> dashboardConfigs;
-    private List<TabDTO> tabConfigs;
-    private List<PanelDTO> panelConfigs;
+    private List<DashboardDTO> dashboardConfigs = new ArrayList<>();
+    private List<TabDTO> tabConfigs = new ArrayList<>();
+    private List<PanelDTO> panelConfigs = new ArrayList<>();
 
     public DashboardBuilderData addDashboardConfig ( DashboardDTO dashboardDTO ) {
         if(dashboardConfigs == null) dashboardConfigs = new ArrayList<>();
