@@ -154,6 +154,10 @@ public class DefaultDataService {
         QueryConfig schemaSelectListQuery = new QueryConfig("DD_DevDash_Linkable_Schema", "Schema Select List",
             "Select schemaconfig_id as value, code as label from schemaconfig", configuratorScheme);
         queryConfigRepository.saveAndFlush(schemaSelectListQuery);
+
+        QueryConfig tabSelectListQuery = new QueryConfig("DD_DevDash_Linkable_Tabs", "Schema Select List",
+            "Select tabconfig_id as value, code as label from tabconfig", configuratorScheme);
+        queryConfigRepository.saveAndFlush(tabSelectListQuery);
     }
 
     /**
@@ -316,7 +320,7 @@ public class DefaultDataService {
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Panel_List", "Panel List", 3,1,
-        "[{\"code\":\"DD_Configurator_Panel_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Panel_List\"},{\"code\":\"DD_Configurator_Panel_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Panel_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Panel_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Panel_List\"},{\"code\":\"DD_Configurator_Panel_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Panel_List\",\"DD_DevDash_Linkable_Tabs\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Panel_Create", "Panel Create", 1,2,
@@ -326,7 +330,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Panel_Create_F_grid_col\",\"type\":\"TEXT\",\"label\":\"Col\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_grid_row\",\"type\":\"TEXT\",\"label\":\"Row\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_F_elements\",\"type\":\"TEXT\",\"label\":\"Elements\"}, "+
-            "{\"code\":\"DD_Configurator_Panel_Create_F_tabconfig_id\",\"type\":\"TEXT\",\"label\":\"Tab to Link\"}, "+
+            //"{\"code\":\"DD_Configurator_Panel_Create_F_tabconfig_id\",\"type\":\"TEXT\",\"label\":\"Tab to Link\"}, "+
+            "{\"code\":\"DD_Configurator_Panel_Create_F_tabconfig_id\",\"type\":\"SELECT\",\"label\":\"Tab to Link\", \"dataOn\":\"DD_DevDash_Linkable_Tabs\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
             "{\"code\":\"DD_Configurator_Panel_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Panel_Create\",\"DD_DevDash_Panel_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
@@ -421,7 +426,7 @@ public class DefaultDataService {
 
         PanelConfig panelConfig = null;
         panelConfig = new PanelConfig("DD_Configurator_Connection_List", "Connection List", 3,1,
-        "[{\"code\":\"DD_Configurator_Connection_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Connection_List\"},{\"code\":\"DD_Configurator_Connection_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Connection_List\"],\"triggerOnLoad\":true}]", tabConfig);
+        "[{\"code\":\"DD_Configurator_Connection_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Connection_List\"},{\"code\":\"DD_Configurator_Connection_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Connection_List\",\"DD_DevDash_Linkable_Schema\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Connection_Create", "Connection Create", 1,2,
@@ -432,7 +437,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Connection_Create_F_Userame\",\"type\":\"TEXT\",\"label\":\"Username\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Password\",\"type\":\"TEXT\",\"label\":\"Password\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_F_Url\",\"type\":\"TEXT\",\"label\":\"Url\"}, "+
-            "{\"code\":\"DD_Configurator_Connection_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
+            //"{\"code\":\"DD_Configurator_Connection_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
+            "{\"code\":\"DD_Configurator_Connection_Create_F_Schemaconfig_Id\",\"type\":\"SELECT\",\"label\":\"Schema\", \"dataOn\":\"DD_DevDash_Linkable_Schema\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
             "{\"code\":\"DD_Configurator_Connection_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Connection_Create\",\"DD_DevDash_Connection_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
@@ -483,7 +489,7 @@ public class DefaultDataService {
         "["+
             "{\"code\":\"DD_Configurator_Query_List_Table1\",\"type\":\"TABLE\",\"dataOn\":\"DD_DevDash_Query_List\"}," + 
             "{\"code\":\"DD_Configurator_Query_List_Page1\",\"type\":\"PAGINATOR\", \"exeQuery\":[\"DD_DevDash_Query_List\"], \"offsetRC\":\"DD_Configurator_Query_List_Table1_offset\", \"limitRC\":\"DD_Configurator_Query_List_Table1_limit\"}," + 
-            "{\"code\":\"DD_Configurator_Query_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Query_List\"],\"triggerOnLoad\":true}]", tabConfig);
+            "{\"code\":\"DD_Configurator_Query_List_Refresh1\",\"type\":\"BUTTON\", \"label\":\"Filter\",\"exeQuery\":[\"DD_DevDash_Query_List\",\"DD_DevDash_Linkable_Schema\"],\"triggerOnLoad\":true}]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);
 
         panelConfig = new PanelConfig("DD_Configurator_Query_Create", "Query Create", 1,2,
@@ -493,7 +499,8 @@ public class DefaultDataService {
             "{\"code\":\"DD_Configurator_Query_Create_F_Ddl_Type\",\"type\":\"TEXT\",\"label\":\"DDL Type\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_Path\",\"type\":\"TEXT\",\"label\":\"Path\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_F_QueryString\",\"type\":\"TEXT\",\"label\":\"Query String\"}, " +
-            "{\"code\":\"DD_Configurator_Query_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
+            // "{\"code\":\"DD_Configurator_Query_Create_F_Schemaconfig_Id\",\"type\":\"TEXT\",\"label\":\"Schema Config to Link\"}, "+
+            "{\"code\":\"DD_Configurator_Query_Create_F_Schemaconfig_Id\",\"type\":\"SELECT\",\"label\":\"Schema\", \"dataOn\":\"DD_DevDash_Linkable_Schema\", \"dataOnParser\":\"SelectKeyParser\",\"dataOnParserConfig\":\"{\\\"jsonParsable\\\":true}\"}, "+
             "{\"code\":\"DD_Configurator_Query_Create_BT_Save\",\"type\":\"BUTTON\", \"label\":\"Save\",\"exeQuery\":[\"DD_DevDash_Query_Create\",\"DD_DevDash_Query_List\"],\"triggerOnLoad\":false} "+
         "]", tabConfig);
         panelConfigRepository.saveAndFlush(panelConfig);   
