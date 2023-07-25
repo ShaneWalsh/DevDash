@@ -11,5 +11,12 @@ public class ElementData {
     private String code; 
     private String replacementCode; 
     private String elementDataType; 
-    private String value;
+    private Object value;
+
+    public String getStringValue() {
+        if(value != null){
+            return value.toString();
+        }
+        return null;
+    }
 }

@@ -46,7 +46,7 @@ public class OptionalQueryModelBlock extends CommonQueryBlock {
         String clauseTemp = getClause();
         for(String rc : getReplacementCodes()){
             if(replacementCodeMap.containsKey(rc)){
-                clauseTemp = replaceReplacementCode(clauseTemp, rc, replacementCodeMap.get(rc).getValue());
+                clauseTemp = replaceReplacementCode(clauseTemp, rc, replacementCodeMap.get(rc).getStringValue());
             } else {
                 log.warn("Failed to supply all of the required rc: {} for optional clause: {}", rc, getClause());
                 return "";

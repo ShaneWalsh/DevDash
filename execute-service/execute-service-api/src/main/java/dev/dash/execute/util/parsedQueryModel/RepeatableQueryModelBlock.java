@@ -57,7 +57,7 @@ public class RepeatableQueryModelBlock extends CommonQueryBlock {
         String clauseTemp = getClause();
         for(String rc : getReplacementCodes()){
             if(replacementCodeMap.containsKey(rc)){
-                String rcValue = replacementCodeMap.get(rc).getValue();
+                String rcValue = replacementCodeMap.get(rc).getStringValue();
                 String[] rcValueSplit = rcValue.split(",");
                 if(rcValueSplit.length > 1) {
                     boolean first = true;
@@ -68,7 +68,7 @@ public class RepeatableQueryModelBlock extends CommonQueryBlock {
                     }
                 } else {
                     if(totalClause.equalsIgnoreCase("")){ // total clause is not set yet
-                        clauseTemp = replaceReplacementCode(clauseTemp, rc, replacementCodeMap.get(rc).getValue());
+                        clauseTemp = replaceReplacementCode(clauseTemp, rc, replacementCodeMap.get(rc).getStringValue());
                     } else { // the clause is already populated, and maybe even has joiners, so replace the RC across the whole clause+joiners
                         totalClause = replaceReplacementCode(totalClause, rc, rcValue);
                     }

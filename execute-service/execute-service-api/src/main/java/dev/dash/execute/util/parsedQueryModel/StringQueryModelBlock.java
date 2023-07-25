@@ -26,7 +26,7 @@ public class StringQueryModelBlock implements QueryModelBlock {
         String queryStringTemp = queryString;
         // todo refactor this and make it more efficent
         for(ElementData elementData:replacementCodeMap.values()) {
-            queryStringTemp = replaceReplacementCode(queryStringTemp,elementData.getReplacementCode(),elementData.getValue());
+            queryStringTemp = replaceReplacementCode(queryStringTemp,elementData.getReplacementCode(),elementData.getStringValue());
         }
         return queryStringTemp;
     }

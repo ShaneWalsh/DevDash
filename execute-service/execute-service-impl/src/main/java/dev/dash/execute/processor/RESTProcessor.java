@@ -17,6 +17,8 @@ import dev.dash.security.AuditLogicService;
 import dev.dash.util.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -32,8 +34,12 @@ public class RESTProcessor implements ResourceProcessor {
     public JSONArray processQuery(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        // Add Authorisation is username is defined.
+        if(connectionConfig.getUsername() != null && connectionConfig.getUsername().length() > 0){
+            headers.add("Authorization", "Basic " + getBasicAuthHeader(connectionConfig));
+        }
         RestTemplate restTemplate = new RestTemplate();
+
         HttpEntity<String> request;
         if(StringUtil.isVaildString(queryConfig.getQueryString())){
             String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
@@ -65,6 +71,19 @@ public class RESTProcessor implements ResourceProcessor {
             sb.append(queryConfig.getPath());
         }
         return sb.toString();
+    }
+
+    private static String getBasicAuthHeader(ConnectionConfig config) {
+        String credentials = config.getUsername()+":"+config.getPassword();
+        String base64encodedString = "";
+        try {
+            // TODO better error handling here.
+            base64encodedString = Base64.getEncoder().encodeToString(credentials.getBytes("utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return base64encodedString;
     }
 
 }

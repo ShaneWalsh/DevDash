@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.transaction.Transactional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import dev.dash.model.SecurityRole;
@@ -32,7 +33,8 @@ public class SecurityLogicServiceImpl implements SecurityLogicService {
                 parentRole = parentRole.getParentSecurityRole();
             }
         }
-        log.warn( "Failed Role check. User:{} role: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal(), requiredRole);
+        // TODO add Audit log for failed check?
+        log.warn( "Failed Role check. User:{} role: {}", ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername(), requiredRole.getCode());
         return false;
     }
 
