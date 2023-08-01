@@ -76,10 +76,11 @@ public class QueryConfig implements Auditable {
         this.ddlType = DdlTypeEnum.Select.name();
     }
 
-    public QueryConfig(String code, String description, String queryString, String ddlType, SchemaConfig schemaConfig) {
+    public QueryConfig(String code, String description, String queryString, String path, String ddlType, SchemaConfig schemaConfig) {
         this.code = code;
         this.description = description;
         this.queryString = queryString;
+        this.path = path;
         this.ddlType = ddlType;
         this.schemaConfig = schemaConfig;
     }

@@ -102,4 +102,45 @@ public class QueryStringParserTest {
 
         
     }
+
+
+    @Test
+    void extractParsedQueryModel_rest_body_rc_Test() {
+        ParsedQueryModel extractParsedQueryModel = QueryStringParser.extractParsedQueryModel("{" +
+                "  \"credentials\": {" + //
+                "    \"name\": \"administrator\"," + //
+                "    \"password\": \"${replacement_code}\"," + //
+                "    \"site\": {" + //
+                "      \"contentUrl\": \"\"" + //
+                "    }" + //
+                "  }" + //
+                "}");
+
+        Map<String, ElementData> mappy = new HashMap<>();
+        mappy.put("tutIdFromDate", new ElementData("replacement_code", "replacement_code", "String", "1990"));
+
+        String stringQuery = extractParsedQueryModel.processElementData(mappy);
+        assertEquals("{  \"credentials\": {    \"name\": \"administrator\",    \"password\": \"1990\",    \"site\": {      \"contentUrl\": \"\"    }  }}", stringQuery);
+
+        extractParsedQueryModel = QueryStringParser.extractParsedQueryModel("{\n" + //
+                "  \"\t\t credentials\": {\n" + //
+                "    \"name\": \"admini_${replacement_code}_strator\",\n" + //
+                "    \"\t\t password\": \"ex/ample/${replacement_code}/1\",\n" + //
+                "    \"site\": {\n" + //
+                "      \"contentUrl\": \"\"\n" + //
+                "    }\n" + //
+                "  }\n" + //
+                "}");
+
+        stringQuery = extractParsedQueryModel.processElementData(mappy);
+        assertEquals("{\n" + //
+                "  \"\t\t credentials\": {\n" + //
+                "    \"name\": \"admini_1990_strator\",\n" + //
+                "    \"\t\t password\": \"ex/ample/1990/1\",\n" + //
+                "    \"site\": {\n" + //
+                "      \"contentUrl\": \"\"\n" + //
+                "    }\n" + //
+                "  }\n" + //
+                "}", stringQuery);
+    }
 }

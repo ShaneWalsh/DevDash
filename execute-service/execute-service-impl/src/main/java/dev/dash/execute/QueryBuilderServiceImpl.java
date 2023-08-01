@@ -181,12 +181,14 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
                 queryDTO.setDescription(queryDTO.getDescription());
                 queryDTO.setQueryString(queryDTO.getQueryString());
                 queryDTO.setDdlType(queryType.name());
+                queryDTO.setPath(queryDTO.getPath());
                 queryConfig.setSchemaConfig(schemaConfig);
             } else {
                 queryConfig = new QueryConfig (
                     queryDTO.getCode(),
                     queryDTO.getDescription(),
                     queryDTO.getQueryString(),
+                    queryDTO.getPath(),
                     queryType.name(),
                     schemaConfig
                 );

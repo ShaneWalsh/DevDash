@@ -23,7 +23,7 @@ public class QueryStringParser {
 
     /**
      * basic string replacement, will check if any of the specfied fields need to be replaced in this query
-     * not very efficent and should be refactored to find the required ${} varibles and then get the value from a map.
+     * not very efficent and should be refactored to find the required ${} variables and then get the value from a map.
      */
     public static String parseAndReplaceQueryString(QueryConfig queryConfig, ExecutionData executionData ){
         String queryString = queryConfig.getQueryString();

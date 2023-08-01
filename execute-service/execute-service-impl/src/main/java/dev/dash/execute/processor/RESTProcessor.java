@@ -43,6 +43,7 @@ public class RESTProcessor implements ResourceProcessor {
         HttpEntity<String> request;
         if(StringUtil.isVaildString(queryConfig.getQueryString())){
             String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
+            log.info("REST query : " + query);
             request = new HttpEntity<String>(query, headers);
         } else {
             request = new HttpEntity<String>(headers);
