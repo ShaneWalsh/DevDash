@@ -12,7 +12,6 @@ import dev.dash.execute.util.parsedQueryModel.RepeatableQueryModelBlock;
 import dev.dash.execute.util.parsedQueryModel.StringQueryModelBlock;
 import dev.dash.execute.util.queryParts.LogicBlock;
 import dev.dash.execute.util.queryParts.Tag;
-import dev.dash.model.QueryConfig;
 import dev.dash.model.body.ExecutionData;
 import dev.dash.model.elements.ElementData;
 
@@ -25,8 +24,7 @@ public class QueryStringParser {
      * basic string replacement, will check if any of the specfied fields need to be replaced in this query
      * not very efficent and should be refactored to find the required ${} variables and then get the value from a map.
      */
-    public static String parseAndReplaceQueryString(QueryConfig queryConfig, ExecutionData executionData ){
-        String queryString = queryConfig.getQueryString();
+    public static String parseAndReplaceQueryString(String queryString, ExecutionData executionData ){
         List<ElementData> allData = new ArrayList<>(); // todo, is this even required anymore?
         Map<String,ElementData> replacementCodeMap = new HashMap<>();
         if(executionData != null && executionData.getPanelElementData() != null) {
@@ -73,7 +71,6 @@ public class QueryStringParser {
         int currentIndex = 0;
         if(blocks.size() > 0){
             for(LogicBlock block : blocks){
-                currentIndex = 0;
                 Tag startTag = block.getStartTag();
                 int startingTagIndex = startTag.getStartIndex();
                 if(startingTagIndex > currentIndex){

@@ -108,6 +108,10 @@ WIP table of elements attributes and the different values.
 | initialDataParser | DataParser | the method of data extraction, might be value from a table row, or date etc |
 | initialDataParserConfig | string | the method of data extraction, might be value from a table row, or date etc |
 | truncateDataLength | number | truncate the data in display fields. Editable cells still contain full data |
+| submitEmpty | boolean | submit the elementData + RC code even if its an empty string/null/undefined. True by default. Optional query blocks will not render if replacementCode+blank data is omitted |
+
+  // submit the elementData + RC code even if its an empty string/null/undefined // sometimes you want it to be false so a Optional query block will not be rendered with ""
+  protected submitEmpty:boolean=true;
 
 ## Table Element
 The table element will activate on clicking on a table row. The row data is then exposed in the activation. 

@@ -42,7 +42,7 @@ public class RESTProcessor implements ResourceProcessor {
 
         HttpEntity<String> request;
         if(StringUtil.isVaildString(queryConfig.getQueryString())){
-            String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
+            String query = QueryStringParser.parseAndReplaceQueryString( queryConfig.getQueryString(), executionData );
             log.info("REST query : " + query);
             request = new HttpEntity<String>(query, headers);
         } else {
@@ -69,7 +69,8 @@ public class RESTProcessor implements ResourceProcessor {
     String assembleUrl(QueryConfig queryConfig, ConnectionConfig connectionConfig, ExecutionData executionData) {
         StringBuilder sb = new StringBuilder(connectionConfig.getUrl());
         if(StringUtil.isVaildString(queryConfig.getPath())){
-            sb.append(queryConfig.getPath());
+            String path = QueryStringParser.parseAndReplaceQueryString( queryConfig.getPath(), executionData );
+            sb.append(path);
         }
         return sb.toString();
     }

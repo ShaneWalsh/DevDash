@@ -51,7 +51,7 @@ public class SqlProcessor implements ResourceProcessor {
         SQLConnector connector = getConnection(connectionConfig);
         Connection connection = connector.connect();
         try { // execute the query
-            String query = QueryStringParser.parseAndReplaceQueryString( queryConfig, executionData );
+            String query = QueryStringParser.parseAndReplaceQueryString( queryConfig.getQueryString(), executionData );
             if ( DdlTypeEnum.Select.equals( DdlTypeEnum.findType( queryConfig.getDdlType() ) ) ) {
                 ResultSet rs = executeQuery(query, connection, executionData);
                 JSONArray jsonArray = jsonify(rs);
