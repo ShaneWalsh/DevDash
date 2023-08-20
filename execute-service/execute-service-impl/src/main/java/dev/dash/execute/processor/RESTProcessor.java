@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 @Slf4j
@@ -56,8 +57,16 @@ public class RESTProcessor implements ResourceProcessor {
         
         JSONArray arr = new JSONArray();
         if(response.hasBody()) {
-            JSONObject body = new JSONObject(response.getBody());
-            return arr.put(body);
+            String value = response.getBody();
+            try {
+                JSONObject body = new JSONObject(value);
+                return arr.put(body);
+            } catch(JSONException e) {
+                log.info("REST response value is not JSON parasble, wrapping in data attr");
+                JSONObject wrapped = new JSONObject();
+                wrapped.put("data", value);
+                arr.put(wrapped);
+            }
         }
         return arr;
     }
