@@ -81,26 +81,46 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
     }
 
     @Override
-    public String exportConfig(String[] schemaConfigs) {
-        auditLogicService.auditEntityEvent(schemaConfigs, AuditEventTypeEnum.ExportConfig);
-        log.info("Export of schemas started: {}", String.join(", ",schemaConfigs));
-        QueryBuilderData queryBuilderData = new QueryBuilderData();
-        for ( String schemaCode : schemaConfigs ) {
+    public String exportConfigByDashboard(String dashboardCode) {
+        List<SchemaConfig> schemaConfigs = schemaConfigRepository.findByDashboardConfigsSet_Code(dashboardCode);
+        List<String> schemaCodes = schemaConfigs.stream().map(schemaConfig -> schemaConfig.getCode()).collect(Collectors.toList());
+
+        auditLogicService.auditEntityEvent(schemaCodes, AuditEventTypeEnum.ExportConfig);
+        log.info("Export of schemas started: {}", String.join(", ",schemaCodes));
+
+        return JsonUtil.toJSON(schemasToQueryBuilder(schemaConfigs));
+    }
+
+
+    @Override
+    public String exportConfig(String[] schemaStrs) {
+        auditLogicService.auditEntityEvent(schemaStrs, AuditEventTypeEnum.ExportConfig);
+        log.info("Export of schemas started: {}", String.join(", ",schemaStrs));
+        List<SchemaConfig> schemaConfigs = new ArrayList<>();
+        for ( String schemaCode : schemaStrs ) {
             if( StringUtil.isVaildString(schemaCode) && schemaConfigRepository.existsByCode(schemaCode) ){
-                SchemaConfig schemaConfig = schemaConfigRepository.findByCode( schemaCode );
-                queryBuilderData.addSchemaConfig(convert(schemaConfig));
-                for(QueryConfig queryConfig : schemaConfig.getQueryConfigsSet()){
-                    queryBuilderData.addQueryConfig(convert(queryConfig));
-                }
-                for(ConnectionConfig connectionConfig : schemaConfig.getConnectionConfigSet()){
-                    queryBuilderData.addConnectionConfig(convert(connectionConfig));
-                }
+                schemaConfigs.add(schemaConfigRepository.findByCode( schemaCode ));
+            }
+        }
+
+        return JsonUtil.toJSON(schemasToQueryBuilder(schemaConfigs));
+    }
+    
+    private QueryBuilderData schemasToQueryBuilder(List<SchemaConfig> schemaConfigs){
+        QueryBuilderData queryBuilderData = new QueryBuilderData();
+        for ( SchemaConfig schemaConfig : schemaConfigs ) {
+            queryBuilderData.addSchemaConfig(convert(schemaConfig));
+            for(QueryConfig queryConfig : schemaConfig.getQueryConfigsSet()){
+                queryBuilderData.addQueryConfig(convert(queryConfig));
+            }
+            for(ConnectionConfig connectionConfig : schemaConfig.getConnectionConfigSet()){
+                queryBuilderData.addConnectionConfig(convert(connectionConfig));
             }
         }
         log.debug( "Exported Schema Config: {} ", queryBuilderData.getContentsList() );
-        return JsonUtil.toJSON(queryBuilderData);
+        return queryBuilderData;
     }
-    
+
     private boolean importSchema (SchemaDTO schemaDTO) {
         if ( StringUtil.isVaildString( schemaDTO.getCode() ) ) {
             SchemaConfig schemaConfig = null;
@@ -242,5 +262,6 @@ public class QueryBuilderServiceImpl implements QueryBuilderService {
         if( queryConfig.getSchemaConfig() != null ) queryDTO.setSchemaCode( queryConfig.getSchemaConfig().getCode() );
         return queryDTO;
     }
+
 
 }

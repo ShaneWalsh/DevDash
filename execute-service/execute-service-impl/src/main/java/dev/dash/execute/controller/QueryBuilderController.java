@@ -70,6 +70,20 @@ public class QueryBuilderController {
         return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * export all query data related to dashboard code
+     */
+    @GetMapping("/exportbydashboard")
+	public ResponseEntity<String> exportDataByDashboard(@RequestParam(name = "dashboard") String dashboardCode) {
+        if ( StringUtil.isVaildString(dashboardCode) ) {
+            String exportJson = queryBuilderService.exportConfigByDashboard(dashboardCode);
+            if(StringUtil.isVaildString( exportJson )) {
+                return new ResponseEntity<>(exportJson,HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/schema")
 	public Long createSchema(SchemaDTO schemaDTO) {
         SchemaConfig schemaConfig = new SchemaConfig(schemaDTO.getCode(),
